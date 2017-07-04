@@ -1,4 +1,4 @@
-package cn.wostore.baseapp;
+package cn.wostore.baseapp.app;
 
 import android.app.Application;
 

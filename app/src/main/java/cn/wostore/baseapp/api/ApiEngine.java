@@ -3,7 +3,7 @@ package cn.wostore.baseapp.api;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import cn.wostore.baseapp.App;
+import cn.wostore.baseapp.app.App;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

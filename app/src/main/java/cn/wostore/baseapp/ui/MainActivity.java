@@ -27,7 +27,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ProgressDialog mDialog;
-    private Toolbar mToolbar;
     private FloatingActionButton mFab;
     private TextView mTextView;
 
@@ -47,8 +46,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     @Override
     public void initView() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
 
         mTextView = (TextView) findViewById(R.id.tv);
         mFab = (FloatingActionButton) findViewById(R.id.fab);

@@ -1,10 +1,19 @@
 package cn.wostore.baseapp.base;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.Window;
 
+import cn.wostore.baseapp.R;
+import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.util.TUtil;
+import cn.wostore.baseapp.widget.StatusBarCompat;
 
 /***************使用例子*********************
 1.mvp模式
@@ -49,6 +58,8 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //设置layout前的设置
+        doBeforeSetcontentView();
         //设置布局
         setContentView(getLayoutId());
         mPresenter = TUtil.getT(this, 0);
@@ -58,11 +69,27 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
         initView();
     }
 
+    /**
+     * 设置layout前的配置
+     */
+    protected void doBeforeSetcontentView(){
+        // 把actvity放到application栈中管理
+        AppManager.getAppManager().addActivity(this);
+        // 无标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // 设置竖屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //设置状态栏颜色
+        SetStatusBarColor();
+
+    }
+
     @Override
     protected void onDestroy() {
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+        AppManager.getAppManager().finishActivity(this);
         super.onDestroy();
     }
 
@@ -77,4 +104,26 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
 
     //初始化view
     public abstract void initView();
+
+    /**
+     * 着色状态栏（4.4以上系统有效）
+     */
+    protected void SetStatusBarColor() {
+        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimary));
+    }
+
+    /**
+     * 着色状态栏（4.4以上系统有效）
+     */
+    protected void SetStatusBarColor(int color) {
+        StatusBarCompat.setStatusBarColor(this, color);
+    }
+
+    /**
+     * 透明状态栏（4.4以上系统有效）
+     */
+    protected void SetTranslanteBar() {
+        StatusBarCompat.translucentStatusBar(this);
+    }
+
 }
