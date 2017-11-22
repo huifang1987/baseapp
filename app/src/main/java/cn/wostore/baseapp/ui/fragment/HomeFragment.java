@@ -1,30 +1,28 @@
-package cn.wostore.baseapp.ui;
+package cn.wostore.baseapp.ui.fragment;
 
 import android.app.ProgressDialog;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cn.wostore.baseapp.base.BaseFragment;
 import java.util.List;
 import java.util.Random;
 
 import cn.wostore.baseapp.R;
-import cn.wostore.baseapp.base.BaseActivity;
-import cn.wostore.baseapp.bean.Gank;
-import cn.wostore.baseapp.mvp.contract.MainContract;
-import cn.wostore.baseapp.mvp.model.MainModel;
-import cn.wostore.baseapp.mvp.presenter.MainPresenter;
+import cn.wostore.baseapp.api.response.GetGankResponse;
+import cn.wostore.baseapp.mvp.contract.HomeContract;
+import cn.wostore.baseapp.mvp.model.HomeModel;
+import cn.wostore.baseapp.mvp.presenter.HomePresenter;
 
 
-public class MainActivity extends BaseActivity<MainPresenter, MainModel>
-        implements MainContract.View {
+public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
+        implements HomeContract.View {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = HomeFragment.class.getSimpleName();
 
     private ProgressDialog mDialog;
     private FloatingActionButton mFab;
@@ -36,7 +34,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
      **************************/
     @Override
     public int getLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.fragment_home;
     }
 
     @Override
@@ -47,10 +45,10 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     @Override
     public void initView() {
 
-        mTextView = (TextView) findViewById(R.id.tv);
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mTextView = (TextView) rootView.findViewById(R.id.tv);
+        mFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
 
-        mDialog = new ProgressDialog(this);
+        mDialog = new ProgressDialog(getActivity());
         mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mDialog.setCancelable(false);
         mDialog.setMessage("正在加载...");
@@ -73,13 +71,13 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     }
 
     @Override
-    public void onSucceed(Gank data) {
+    public void onSucceed(GetGankResponse data) {
 
-        Toast.makeText(this, "请求成功", Toast.LENGTH_SHORT).show();
-        List<Gank.Result> results = data.getResults();
+        Toast.makeText(getActivity(), "请求成功", Toast.LENGTH_SHORT).show();
+        List<GetGankResponse.Result> results = data.getResults();
         mTextView.setText(results.get(new Random().nextInt(10)).toString());
 
-        for (Gank.Result result : results) {
+        for (GetGankResponse.Result result : results) {
             Log.d(TAG, result.toString());
         }
     }
@@ -87,7 +85,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     @Override
     public void onFail(String err) {
         Log.e(TAG, err);
-        Toast.makeText(this, "请求失败", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -95,11 +93,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         mDialog.dismiss();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -1,4 +1,4 @@
-package cn.wostore.baseapp.util;
+package cn.wostore.baseapp.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

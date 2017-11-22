@@ -2,17 +2,14 @@ package cn.wostore.baseapp.base;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.Window;
 
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.manager.AppManager;
-import cn.wostore.baseapp.util.TUtil;
+import cn.wostore.baseapp.utils.TUtil;
 import cn.wostore.baseapp.widget.StatusBarCompat;
 
 /***************使用例子*********************

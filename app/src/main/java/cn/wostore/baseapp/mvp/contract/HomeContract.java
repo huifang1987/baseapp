@@ -4,17 +4,17 @@ import io.reactivex.Observable;
 import cn.wostore.baseapp.base.BaseModel;
 import cn.wostore.baseapp.base.BasePresenter;
 import cn.wostore.baseapp.base.BaseView;
-import cn.wostore.baseapp.bean.Gank;
+import cn.wostore.baseapp.api.response.GetGankResponse;
 
 
 
-public interface MainContract {
+public interface HomeContract {
 
     interface View extends BaseView {
 
         void showDialog();
 
-        void onSucceed(Gank data);
+        void onSucceed(GetGankResponse data);
 
         void onFail(String err);
 
@@ -23,7 +23,7 @@ public interface MainContract {
     }
 
     interface Model extends BaseModel {
-        Observable<Gank> getGank();
+        Observable<GetGankResponse> getGank();
     }
 
     abstract class Presenter extends BasePresenter<View, Model> {

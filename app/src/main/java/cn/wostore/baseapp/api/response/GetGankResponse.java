@@ -1,9 +1,9 @@
-package cn.wostore.baseapp.bean;
+package cn.wostore.baseapp.api.response;
 
 import java.util.List;
 
 
-public class Gank {
+public class GetGankResponse {
 
     private boolean error;
 

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.wostore.baseapp.rx.RxManager;
-import cn.wostore.baseapp.util.TUtil;
+import cn.wostore.baseapp.utils.TUtil;
 
 
 /***************使用例子*********************

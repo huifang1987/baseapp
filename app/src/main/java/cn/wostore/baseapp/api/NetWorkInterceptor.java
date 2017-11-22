@@ -3,7 +3,7 @@ package cn.wostore.baseapp.api;
 import java.io.IOException;
 
 import cn.wostore.baseapp.app.App;
-import cn.wostore.baseapp.util.NetUtil;
+import cn.wostore.baseapp.utils.NetUtil;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.Request;

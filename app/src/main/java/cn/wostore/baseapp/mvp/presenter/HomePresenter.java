@@ -3,19 +3,19 @@ package cn.wostore.baseapp.mvp.presenter;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import cn.wostore.baseapp.bean.Gank;
-import cn.wostore.baseapp.mvp.contract.MainContract;
+import cn.wostore.baseapp.api.response.GetGankResponse;
+import cn.wostore.baseapp.mvp.contract.HomeContract;
 
 
 /**
  * Created by Nicholas on 2016/10/30.
  */
 
-public class MainPresenter extends MainContract.Presenter {
+public class HomePresenter extends HomeContract.Presenter {
 
     @Override
     public void getGank() {
-        mModel.getGank().subscribe(new Observer<Gank>() {
+        mModel.getGank().subscribe(new Observer<GetGankResponse>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
                 mRxManager.add(d);
@@ -23,7 +23,7 @@ public class MainPresenter extends MainContract.Presenter {
             }
 
             @Override
-            public void onNext(@NonNull Gank data) {
+            public void onNext(@NonNull GetGankResponse data) {
                 mView.onSucceed(data);
             }
 
