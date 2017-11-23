@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.wostore.baseapp.base.BaseFragment;
+import cn.wostore.baseapp.widget.CustomToolBar;
 import java.util.List;
 import java.util.Random;
 
@@ -27,7 +28,7 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
     private ProgressDialog mDialog;
     private FloatingActionButton mFab;
     private TextView mTextView;
-
+    private CustomToolBar toolbar;
 
     /****************************
      * 覆写 BaseActivity 方法
@@ -47,18 +48,23 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
 
         mTextView = (TextView) rootView.findViewById(R.id.tv);
         mFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-
+        toolbar = (CustomToolBar) rootView.findViewById(R.id.tool_bar);
         mDialog = new ProgressDialog(getActivity());
         mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mDialog.setCancelable(false);
         mDialog.setMessage("正在加载...");
-
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPresenter.getGank();
             }
         });
+        setUpToolbar();
+    }
+
+    private void setUpToolbar() {
+        toolbar.setTitle(getString(R.string.title_home));
+        toolbar.setShowBack(false);
     }
 
 

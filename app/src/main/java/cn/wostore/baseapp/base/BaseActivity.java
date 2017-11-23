@@ -2,9 +2,12 @@ package cn.wostore.baseapp.base;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
 
 import cn.wostore.baseapp.R;
@@ -77,7 +80,7 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
         // 设置竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //设置状态栏颜色
-        SetStatusBarColor();
+        setSystemUI();
 
     }
 
@@ -121,6 +124,23 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
      */
     protected void SetTranslanteBar() {
         StatusBarCompat.translucentStatusBar(this);
+    }
+
+    /**
+     * 隐藏状态栏
+     */
+    protected void setSystemUI() {
+        View decorView = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= 21) {
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            int option = View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+        }
     }
 
 }

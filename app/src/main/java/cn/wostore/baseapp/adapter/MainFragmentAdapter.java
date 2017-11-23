@@ -3,6 +3,7 @@ package cn.wostore.baseapp.adapter;
 import android.support.v4.app.Fragment;
 import cn.wostore.baseapp.ui.fragment.GankFragment;
 import cn.wostore.baseapp.ui.fragment.HomeFragment;
+import cn.wostore.baseapp.ui.fragment.MeFragment;
 import com.aspsine.fragmentnavigator.FragmentNavigatorAdapter;
 
 
@@ -19,7 +20,7 @@ public class MainFragmentAdapter implements FragmentNavigatorAdapter {
             case 1:
                 return new GankFragment();
             case 2:
-                return new HomeFragment();
+                return new MeFragment();
         }
         return null;
     }
