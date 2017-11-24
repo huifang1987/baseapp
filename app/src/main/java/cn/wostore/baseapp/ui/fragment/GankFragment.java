@@ -103,7 +103,10 @@ public class GankFragment extends BaseFragment {
 		mGankViewPagerAdapter = new GankViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
 		viewPager.setAdapter(mGankViewPagerAdapter);
 		tabs.setupWithViewPager(viewPager);
-
+		//自定义TabLayout
+		for (int i = 0; i < tabs.getTabCount(); i++) {
+			tabs.getTabAt(i).setCustomView(mGankViewPagerAdapter.getTabView(getContext(), i));
+		}
 	}
 
 	private enum CollapsingToolbarLayoutState {

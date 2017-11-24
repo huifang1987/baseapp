@@ -38,11 +38,12 @@
           android:id="@+id/tabs"
           android:layout_width="match_parent"
           android:layout_height="41dp"
-          app:tabBackground="@color/colorPrimary"
+          app:tabBackground="@android:color/white"
           app:tabGravity="fill"
           app:tabIndicatorHeight="0dp"
           app:tabSelectedTextColor="@android:color/darker_gray"
-          app:tabTextColor="@android:color/white"/>
+          app:tabTextColor="@android:color/white"
+          />
 
       </LinearLayout>
 

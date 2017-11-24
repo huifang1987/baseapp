@@ -1,8 +1,13 @@
 package cn.wostore.baseapp.adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.base.BaseFragment;
 import java.util.List;
 
@@ -36,5 +41,12 @@ public class GankViewPagerAdapter extends FragmentStatePagerAdapter {
 	@Override
 	public CharSequence getPageTitle(int position) {
 		return titleList.get(position);
+	}
+
+	public View getTabView(Context context, int position) {
+		View view = LayoutInflater.from(context).inflate(R.layout.layout_tab_item, null);
+		TextView titleTv = (TextView) view.findViewById(R.id.title);
+		titleTv.setText(getPageTitle(position));
+		return view;
 	}
 }
