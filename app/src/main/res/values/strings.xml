@@ -5,6 +5,8 @@
   <string name="title_home">主页</string>
   <string name="title_dashboard">干货</string>
   <string name="title_notifications">我的</string>
+  <string name="tab_a">第一页</string>
+  <string name="tab_b">第二页</string>
   <string name="large_text">
     "Material is the metaphor.\n\n"
 

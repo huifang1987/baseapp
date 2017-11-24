@@ -1,14 +1,18 @@
 package cn.wostore.baseapp.ui.fragment;
 
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import cn.wostore.baseapp.R;
+import cn.wostore.baseapp.adapter.GankViewPagerAdapter;
 import cn.wostore.baseapp.base.BaseFragment;
 import cn.wostore.baseapp.ui.activity.MainActivity;
 import cn.wostore.baseapp.utils.CommonUtil;
-import cn.wostore.baseapp.utils.DeviceUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GankFragment extends BaseFragment {
 	private static final String TAG = GankFragment.class.getCanonicalName();
@@ -16,8 +20,13 @@ public class GankFragment extends BaseFragment {
 	private CustomToolBar mCustomToolBar;
 	private Toolbar toolbar;
 	private AppBarLayout appBar;
-	MainActivity activity;
+	private TabLayout tabs;
+	private ViewPager viewPager;
+
+	private MainActivity activity;
 	private CollapsingToolbarLayoutState state;
+
+	private GankViewPagerAdapter mGankViewPagerAdapter;
 
 	@Override
 	public int getLayoutId() {
@@ -36,8 +45,11 @@ public class GankFragment extends BaseFragment {
 		activity.setSupportActionBar(toolbar);
 		appBar = (AppBarLayout) rootView.findViewById(R.id.app_bar);
 		mCustomToolBar = (CustomToolBar) rootView.findViewById(R.id.tool_bar);
+		viewPager = (ViewPager) rootView.findViewById(R.id.vp);
+		tabs = (TabLayout) rootView.findViewById(R.id.tabs);
 		setupToolBar();
 		setupAppBar();
+		setupViewPager();
 	}
 
 	private void setupToolBar() {
@@ -76,6 +88,22 @@ public class GankFragment extends BaseFragment {
 				mCustomToolBar.setBackgroundColor(CommonUtil.getColorWithAlpha(getResources().getColor(R.color.colorPrimary), alpha));
 			}
 		});
+	}
+
+	private void setupViewPager(){
+
+		List<BaseFragment> fragmentList = new ArrayList<>();
+		fragmentList.add(new TabAFragment());
+		fragmentList.add(new TabBFragment());
+
+		List<String> titleList = new ArrayList<>();
+		titleList.add(getString(R.string.tab_a));
+		titleList.add(getString(R.string.tab_b));
+
+		mGankViewPagerAdapter = new GankViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
+		viewPager.setAdapter(mGankViewPagerAdapter);
+		tabs.setupWithViewPager(viewPager);
+
 	}
 
 	private enum CollapsingToolbarLayoutState {
