@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import cn.wostore.baseapp.rx.RxManager;
 import cn.wostore.baseapp.utils.TUtil;
 
@@ -50,6 +52,7 @@ public abstract class BaseFragment<P extends BasePresenter, M extends BaseModel>
     protected P mPresenter;
     protected M mModel;
     protected RxManager mRxManager;
+    protected Unbinder unbinder;
 
 
     @Nullable
@@ -59,6 +62,7 @@ public abstract class BaseFragment<P extends BasePresenter, M extends BaseModel>
             rootView = inflater.inflate(getLayoutId(), container, false);
         }
         mRxManager=new RxManager();
+        unbinder = ButterKnife.bind(this, rootView);
         mPresenter = TUtil.getT(this, 0);
         mModel= TUtil.getT(this,1);
         initPresenter();
@@ -71,6 +75,7 @@ public abstract class BaseFragment<P extends BasePresenter, M extends BaseModel>
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+        unbinder.unbind();
         super.onDestroyView();
     }
 

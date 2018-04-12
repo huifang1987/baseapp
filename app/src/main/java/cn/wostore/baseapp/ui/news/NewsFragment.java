@@ -1,11 +1,8 @@
-package cn.wostore.baseapp.ui.fragment;
+package cn.wostore.baseapp.ui.news;
 
 import android.app.ProgressDialog;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.wostore.baseapp.base.BaseFragment;
@@ -15,19 +12,14 @@ import java.util.Random;
 
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.api.response.GetGankResponse;
-import cn.wostore.baseapp.mvp.contract.HomeContract;
-import cn.wostore.baseapp.mvp.model.HomeModel;
-import cn.wostore.baseapp.mvp.presenter.HomePresenter;
 
 
-public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
-        implements HomeContract.View {
+public class NewsFragment extends BaseFragment<NewsPresenter, NewsModel>
+        implements NewsContract.View {
 
-    private static final String TAG = HomeFragment.class.getSimpleName();
+    private static final String TAG = NewsFragment.class.getSimpleName();
 
     private ProgressDialog mDialog;
-    private FloatingActionButton mFab;
-    private TextView mTextView;
     private CustomToolBar toolbar;
 
     /****************************
@@ -35,7 +27,7 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
      **************************/
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_home;
+        return R.layout.fragment_news;
     }
 
     @Override
@@ -46,24 +38,18 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
     @Override
     public void initView() {
 
-        mTextView = (TextView) rootView.findViewById(R.id.tv);
-        mFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        toolbar = (CustomToolBar) rootView.findViewById(R.id.tool_bar);
         mDialog = new ProgressDialog(getActivity());
         mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mDialog.setCancelable(false);
         mDialog.setMessage("正在加载...");
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.getGank();
-            }
-        });
         setUpToolbar();
+        mPresenter.getGank();
+
     }
 
     private void setUpToolbar() {
-        toolbar.setTitle(getString(R.string.title_home));
+        toolbar = (CustomToolBar) rootView.findViewById(R.id.tool_bar);
+        toolbar.setTitle(getString(R.string.news));
         toolbar.setShowBack(false);
     }
 
@@ -81,7 +67,6 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
 
         Toast.makeText(getActivity(), "请求成功", Toast.LENGTH_SHORT).show();
         List<GetGankResponse.Result> results = data.getResults();
-        mTextView.setText(results.get(new Random().nextInt(10)).toString());
 
         for (GetGankResponse.Result result : results) {
             Log.d(TAG, result.toString());
@@ -100,12 +85,4 @@ public class HomeFragment extends BaseFragment<HomePresenter, HomeModel>
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

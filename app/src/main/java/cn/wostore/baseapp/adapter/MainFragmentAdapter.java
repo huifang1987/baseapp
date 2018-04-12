@@ -1,9 +1,10 @@
 package cn.wostore.baseapp.adapter;
 
 import android.support.v4.app.Fragment;
-import cn.wostore.baseapp.ui.fragment.GankFragment;
-import cn.wostore.baseapp.ui.fragment.HomeFragment;
-import cn.wostore.baseapp.ui.fragment.MeFragment;
+import cn.wostore.baseapp.ui.home.HomeFragment;
+import cn.wostore.baseapp.ui.news.NewsFragment;
+import cn.wostore.baseapp.ui.me.MeFragment;
+import cn.wostore.baseapp.ui.video.VideoFragment;
 import com.aspsine.fragmentnavigator.FragmentNavigatorAdapter;
 
 
@@ -18,8 +19,10 @@ public class MainFragmentAdapter implements FragmentNavigatorAdapter {
             case 0:
                 return new HomeFragment();
             case 1:
-                return new GankFragment();
+                return new NewsFragment();
             case 2:
+                return new VideoFragment();
+            case 3:
                 return new MeFragment();
         }
         return null;

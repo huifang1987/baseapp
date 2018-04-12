@@ -1,14 +1,14 @@
-package cn.wostore.baseapp.ui.fragment;
+package cn.wostore.baseapp.ui.home;
 
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.base.BaseFragment;
 
-public class TabBFragment extends BaseFragment {
+public class IosFragment extends BaseFragment {
 
 
 	@Override
 	public int getLayoutId() {
-		return R.layout.fragment_tab;
+		return R.layout.fragment_ios;
 	}
 
 	@Override

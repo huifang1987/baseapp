@@ -1,4 +1,4 @@
-package cn.wostore.baseapp.ui.fragment;
+package cn.wostore.baseapp.ui.home;
 
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -8,14 +8,14 @@ import android.util.Log;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.adapter.GankViewPagerAdapter;
 import cn.wostore.baseapp.base.BaseFragment;
-import cn.wostore.baseapp.ui.activity.MainActivity;
+import cn.wostore.baseapp.ui.main.MainActivity;
 import cn.wostore.baseapp.utils.CommonUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GankFragment extends BaseFragment {
-	private static final String TAG = GankFragment.class.getCanonicalName();
+public class HomeFragment extends BaseFragment {
+	private static final String TAG = HomeFragment.class.getCanonicalName();
 
 	private CustomToolBar mCustomToolBar;
 	private Toolbar toolbar;
@@ -30,7 +30,7 @@ public class GankFragment extends BaseFragment {
 
 	@Override
 	public int getLayoutId() {
-		return R.layout.fragment_gank;
+		return R.layout.fragment_home;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class GankFragment extends BaseFragment {
 		mCustomToolBar.setBackActionItemResId(R.mipmap.icon_search);
 		mCustomToolBar.setShowRightActionItem(true);
 		mCustomToolBar.setRightActionItemResId(R.mipmap.icon_category);
-		mCustomToolBar.setTitle(getString(R.string.title_dashboard));
+		mCustomToolBar.setTitle(getString(R.string.home));
 	}
 
 	private void setupAppBar() {
@@ -93,12 +93,12 @@ public class GankFragment extends BaseFragment {
 	private void setupViewPager(){
 
 		List<BaseFragment> fragmentList = new ArrayList<>();
-		fragmentList.add(new TabAFragment());
-		fragmentList.add(new TabBFragment());
+		fragmentList.add(new AndroidFragment());
+		fragmentList.add(new IosFragment());
 
 		List<String> titleList = new ArrayList<>();
-		titleList.add(getString(R.string.tab_a));
-		titleList.add(getString(R.string.tab_b));
+		titleList.add(getString(R.string.android));
+		titleList.add(getString(R.string.ios));
 
 		mGankViewPagerAdapter = new GankViewPagerAdapter(getChildFragmentManager(), fragmentList, titleList);
 		viewPager.setAdapter(mGankViewPagerAdapter);

@@ -1,4 +1,4 @@
-package cn.wostore.baseapp.mvp.contract;
+package cn.wostore.baseapp.ui.news;
 
 import io.reactivex.Observable;
 import cn.wostore.baseapp.base.BaseModel;
@@ -8,7 +8,7 @@ import cn.wostore.baseapp.api.response.GetGankResponse;
 
 
 
-public interface HomeContract {
+public interface NewsContract {
 
     interface View extends BaseView {
 

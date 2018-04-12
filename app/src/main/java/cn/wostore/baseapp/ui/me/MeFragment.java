@@ -1,14 +1,14 @@
-package cn.wostore.baseapp.ui.fragment;
+package cn.wostore.baseapp.ui.me;
 
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.base.BaseFragment;
 
-public class TabAFragment extends BaseFragment {
+public class MeFragment extends BaseFragment {
 
 
 	@Override
 	public int getLayoutId() {
-		return R.layout.fragment_tab;
+		return R.layout.fragment_me;
 	}
 
 	@Override
@@ -18,6 +18,5 @@ public class TabAFragment extends BaseFragment {
 
 	@Override
 	public void initView() {
-
 	}
 }

@@ -1,17 +1,16 @@
-package cn.wostore.baseapp.mvp.presenter;
+package cn.wostore.baseapp.ui.news;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import cn.wostore.baseapp.api.response.GetGankResponse;
-import cn.wostore.baseapp.mvp.contract.HomeContract;
 
 
 /**
  * Created by Nicholas on 2016/10/30.
  */
 
-public class HomePresenter extends HomeContract.Presenter {
+public class NewsPresenter extends NewsContract.Presenter {
 
     @Override
     public void getGank() {

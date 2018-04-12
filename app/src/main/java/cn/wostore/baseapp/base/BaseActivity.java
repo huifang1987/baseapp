@@ -1,6 +1,7 @@
 package cn.wostore.baseapp.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.utils.TUtil;
@@ -54,6 +57,7 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
     protected P mPresenter;
     protected M mModel;
     protected Context mContext;
+    protected Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +66,12 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
         doBeforeSetcontentView();
         //设置布局
         setContentView(getLayoutId());
+        unbinder = ButterKnife.bind(this);
         mPresenter = TUtil.getT(this, 0);
         mModel = TUtil.getT(this, 1);
         mContext = this;
         initPresenter();
-        initView();
+        initView(savedInstanceState);
     }
 
     /**
@@ -90,6 +95,7 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
             mPresenter.onDestroy();
         }
         AppManager.getAppManager().finishActivity(this);
+        unbinder.unbind();
         super.onDestroy();
     }
 
@@ -103,7 +109,7 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
     public abstract void initPresenter();
 
     //初始化view
-    public abstract void initView();
+    public abstract void initView(Bundle savedInstanceState);
 
     /**
      * 着色状态栏（4.4以上系统有效）
@@ -141,6 +147,25 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(option);
         }
+    }
+
+    /**
+     * 通过Class跳转界面
+     **/
+    public void startActivity(Class<?> cls) {
+        startActivity(cls, null);
+    }
+
+    /**
+     * 含有Bundle通过Class跳转界面
+     **/
+    public void startActivity(Class<?> cls, Bundle bundle) {
+        Intent intent = new Intent();
+        intent.setClass(this, cls);
+        if (bundle != null) {
+            intent.putExtras(bundle);
+        }
+        startActivity(intent);
     }
 
 }
