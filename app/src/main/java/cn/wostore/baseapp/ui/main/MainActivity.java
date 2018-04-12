@@ -1,13 +1,18 @@
 package cn.wostore.baseapp.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import butterknife.BindView;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.adapter.MainFragmentAdapter;
 import cn.wostore.baseapp.base.BaseActivity;
+import cn.wostore.baseapp.manager.AppManager;
 import com.aspsine.fragmentnavigator.FragmentNavigator;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +34,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 	private FragmentNavigator mFragmentNavigator;
 
 	private int selectViewId;
+
+	/**
+	 * 用于两次点击退出
+	 */
+	private boolean isExit;
 
 	@Override
 	public int getLayoutId() {
@@ -87,5 +97,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 				break;
 		}
 		showTabUI(v);
+	}
+
+	/**
+	 * 双击back键退出App
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (IDS.get(DEFAULT_POSITION) != selectViewId) {
+				showTabUI(findViewById(IDS.get(DEFAULT_POSITION)));
+			} else {
+				if (!isExit) {
+					Toast.makeText(this, getString(R.string.app_quit_toast), Toast.LENGTH_SHORT)
+						.show();
+					isExit = true;
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							isExit = false;
+						}
+					}, 2000);
+				} else {
+					AppManager.getAppManager().AppExit(MainActivity.this, false);
+
+				}
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }
