@@ -7,6 +7,7 @@
   <string name="android">Android</string>
   <string name="ios">iOS</string>
   <string name="app_quit_toast">再按一次退出</string>
+  <string name="skip">跳过</string>
   <string name="large_text">
     "Material is the metaphor.\n\n"
 
