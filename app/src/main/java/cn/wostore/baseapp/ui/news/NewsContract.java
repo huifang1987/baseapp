@@ -12,21 +12,17 @@ public interface NewsContract {
 
     interface View extends BaseView {
 
-        void showDialog();
-
         void onSucceed(GetGankResponse data);
 
         void onFail(String err);
 
-        void hideDialog();
-
     }
 
     interface Model extends BaseModel {
-        Observable<GetGankResponse> getGank();
+        Observable<GetGankResponse> getGank(int pageNum);
     }
 
     abstract class Presenter extends BasePresenter<View, Model> {
-        public abstract void getGank();
+        public abstract void getGank(int pageNum);
     }
 }

@@ -5,7 +5,9 @@
   <dimen name="fab_margin">16dp</dimen>
   <dimen name="app_bar_height">180dp</dimen>
   <dimen name="text_margin">16dp</dimen>
-  <!-- 底部NavigationBar高度-->
+  <!-- 顶部ToolBar高度 -->
+  <dimen name="toolbar_height">51dp</dimen>
+  <!-- 底部NavigationBar高度 -->
   <dimen name="nav_bar_height">49dp</dimen>
 
 </resources>

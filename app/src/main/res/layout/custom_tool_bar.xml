@@ -9,12 +9,12 @@
         android:id="@+id/placeholder_ll"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal"/>
 
     <RelativeLayout
         android:id="@+id/tool_bar_rl"
         android:layout_width="match_parent"
-        android:layout_height="53dp">
+        android:layout_height="@dimen/toolbar_height">
 
         <ImageView
             android:id="@+id/back_iv"

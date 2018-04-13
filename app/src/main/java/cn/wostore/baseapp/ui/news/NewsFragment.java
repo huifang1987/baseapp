@@ -1,30 +1,54 @@
 package cn.wostore.baseapp.ui.news;
 
 import android.app.ProgressDialog;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
+import android.view.View;
+import butterknife.BindView;
+import cn.wostore.baseapp.Constants;
+import cn.wostore.baseapp.adapter.ItemListAdapter;
+import cn.wostore.baseapp.adapter.ItemListAdapter.OnItemClickListener;
+import cn.wostore.baseapp.adapter.ItemListAdapter.OnRetryClickListener;
+import cn.wostore.baseapp.app.App;
 import cn.wostore.baseapp.base.BaseFragment;
+import cn.wostore.baseapp.utils.NetworkUtil;
+import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
-import java.util.List;
-import java.util.Random;
+import cn.wostore.baseapp.widget.LoadLayout;
+import cn.wostore.baseapp.widget.LoadingDialog;
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.api.response.GetGankResponse;
 
 
 public class NewsFragment extends BaseFragment<NewsPresenter, NewsModel>
-        implements NewsContract.View {
+        implements NewsContract.View, OnRefreshListener {
 
     private static final String TAG = NewsFragment.class.getSimpleName();
 
-    private ProgressDialog mDialog;
-    private CustomToolBar toolbar;
+    @BindView(R.id.tool_bar)
+    CustomToolBar toolbar;
 
-    /****************************
-     * 覆写 BaseActivity 方法
-     **************************/
+    @BindView(R.id.swipe_target)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.swipeToLoadLayout)
+    SwipeToLoadLayout swipeToLoadLayout;
+
+    @BindView(R.id.layout_load)
+    LoadLayout loadLayout;
+
+    private ItemListAdapter adapter;
+
+    private int curPageNum = 1;
+
+    private boolean canLoadMore = false;
+
+    private boolean isFirstIn = true;
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_news;
@@ -37,52 +61,142 @@ public class NewsFragment extends BaseFragment<NewsPresenter, NewsModel>
 
     @Override
     public void initView() {
-
-        mDialog = new ProgressDialog(getActivity());
-        mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mDialog.setCancelable(false);
-        mDialog.setMessage("正在加载...");
+        setupSwipeToLoadLayout();
         setUpToolbar();
-        mPresenter.getGank();
+        setUpRecyclerView();
+        if (!NetworkUtil.isConnected(App.getContext())) {
+            loadLayout.setStatus(LoadLayout.NO_NETWORK);
+        } else {
+            loadLayout.setStatus(LoadLayout.LOADING);
+            mPresenter.getGank(curPageNum);
+        }
+        //加载布局点击重试操作
+        loadLayout.setOnRetryClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.getGank(curPageNum);
+            }
+        });
+    }
 
+    private void setupSwipeToLoadLayout() {
+        swipeToLoadLayout.setLoadMoreEnabled(false);
+        swipeToLoadLayout.setOnRefreshListener(this);
     }
 
     private void setUpToolbar() {
-        toolbar = (CustomToolBar) rootView.findViewById(R.id.tool_bar);
         toolbar.setTitle(getString(R.string.news));
         toolbar.setShowBack(false);
     }
 
+    private void setUpRecyclerView() {
+        adapter = new ItemListAdapter();
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onClick() {
 
-    /*************************
-     *覆写 View 方法
-     ************************/
-    @Override
-    public void showDialog() {
-        mDialog.show();
+            }
+        });
+        adapter.setOnRetryClickListener(new OnRetryClickListener() {
+            @Override
+            public void onClick() {
+                adapter.setRequestStatus(Constants.REQUESTING);
+                mPresenter.getGank(curPageNum);
+            }
+        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager(App.getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                    checkScrollBottom(recyclerView);
+                }
+            }
+        });
+    }
+
+    private void refreshData(GetGankResponse response){
+        if (!response.isError()){
+            if (response.getResults().size() !=0){
+                adapter.setRequestStatus(Constants.REQ_SUCCESS);
+                if (curPageNum == 1) {
+                    adapter.refresh(response.getResults());
+                } else {
+                    adapter.loadMore(response.getResults());
+                }
+                canLoadMore = canLoadMore(29, curPageNum);
+                if(canLoadMore){
+                    adapter.setNextPage(curPageNum + 1);
+                    ++curPageNum;
+                }else {
+                    adapter.setNextPage(-1);
+                }
+                if (isFirstIn) {
+                    isFirstIn = false;
+                }
+                loadLayout.setStatus(LoadLayout.SUCCESS);
+            } else {
+                if (isFirstIn){
+                    loadLayout.setStatus(LoadLayout.EMPTY);
+                }
+            }
+        } else {
+            if (isFirstIn){
+                loadLayout.setStatus(LoadLayout.ERROR);
+            }
+        }
+
+    }
+
+    /**
+     * 检查RecyclerView是否滑动到底部
+     * @param recyclerView
+     */
+    private void checkScrollBottom(RecyclerView recyclerView)
+    {
+        // 滚动到底部
+        if (!recyclerView.canScrollVertically(RecyclerView.VERTICAL))
+        {
+            if (canLoadMore && (adapter.getRequestStatus() != Constants.REQUESTING)){
+                adapter.setRequestStatus(Constants.REQUESTING);
+                mPresenter.getGank(curPageNum);
+            }
+        }
+    }
+
+    /**
+     * 是否可以加载更多
+     */
+    private boolean canLoadMore(int totalCount, int currentPage) {
+        int maxPage = totalCount / 10 + (totalCount % 10 == 0 ? 0 : 1);
+        return maxPage <= currentPage ? false : true;
     }
 
     @Override
     public void onSucceed(GetGankResponse data) {
-
-        Toast.makeText(getActivity(), "请求成功", Toast.LENGTH_SHORT).show();
-        List<GetGankResponse.Result> results = data.getResults();
-
-        for (GetGankResponse.Result result : results) {
-            Log.d(TAG, result.toString());
+        if (swipeToLoadLayout != null && swipeToLoadLayout.isRefreshing()) {
+            swipeToLoadLayout.setRefreshing(false);
         }
+        refreshData(data);
     }
 
     @Override
     public void onFail(String err) {
-        Log.e(TAG, err);
-        Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+        if (swipeToLoadLayout != null && swipeToLoadLayout.isRefreshing()) {
+            swipeToLoadLayout.setRefreshing(false);
+        }
+        if (!isFirstIn){
+            adapter.setRequestStatus(Constants.REQ_FAILED);
+        }
     }
+
 
     @Override
-    public void hideDialog() {
-        mDialog.dismiss();
+    public void onRefresh() {
+        curPageNum = 1;
+        mPresenter.getGank(curPageNum);
     }
-
-
 }

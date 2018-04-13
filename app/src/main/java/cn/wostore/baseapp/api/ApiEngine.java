@@ -17,23 +17,23 @@ public class ApiEngine {
     private volatile static ApiEngine apiEngine;
     private Retrofit retrofit;
 
+    //读超时长，单位：毫秒
+    public static final int READ_TIME_OUT = 15 * 1000;
+    //连接时长，单位：毫秒
+    public static final int CONNECT_TIME_OUT = 15 * 1000;
+
     private ApiEngine() {
 
         //日志拦截器
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        //缓存
-        int size = 1024 * 1024 * 100;
-        File cacheFile = new File(App.getContext().getCacheDir(), "OkHttpCache");
-        Cache cache = new Cache(cacheFile, size);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(12, TimeUnit.SECONDS)
-                .writeTimeout(12, TimeUnit.SECONDS)
+                .connectTimeout(CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
+                .writeTimeout(READ_TIME_OUT, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(new NetWorkInterceptor())
                 .addInterceptor(loggingInterceptor)
-                .cache(cache)
                 .build();
 
         retrofit = new Retrofit.Builder()
@@ -42,7 +42,6 @@ public class ApiEngine {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-
     }
 
     /**
@@ -66,7 +65,7 @@ public class ApiEngine {
      *
      * @return the api service
      */
-    public ApiService getApiService() {
+    public ApiService getService() {
         return retrofit.create(ApiService.class);
     }
 }

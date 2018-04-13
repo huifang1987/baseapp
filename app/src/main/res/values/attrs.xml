@@ -11,4 +11,14 @@
     <attr name="show_back" format="boolean" />
     <attr name="show_right_action_item" format="boolean" />
   </declare-styleable>
+
+  <declare-styleable name="LoadLayout">
+    <attr name="status">
+      <enum name="loading" value="1" />
+      <enum name="no_network" value="2" />
+      <enum name="error" value="3" />
+      <enum name="success" value="4" />
+      <enum name="empty" value="5" />
+    </attr>
+  </declare-styleable>
 </resources>

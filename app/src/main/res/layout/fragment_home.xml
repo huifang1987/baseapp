@@ -56,7 +56,9 @@
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp">
 
-        <include layout="@layout/layout_custom_tool_bar" />
+        <include
+          android:id="@+id/tool_bar"
+          layout="@layout/layout_custom_tool_bar" />
 
       </android.support.v7.widget.Toolbar>
     </android.support.design.widget.CollapsingToolbarLayout>

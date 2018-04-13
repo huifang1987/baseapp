@@ -10,7 +10,7 @@ public interface ApiService {
 
     String BASE_URL="http://gank.io/";
 
-    @GET("api/data/Android/10/{page}")
-    Observable<GetGankResponse> getGank(@Path("page") String page);
+    @GET("api/data/{type}/10/{page}")
+    Observable<GetGankResponse> getGank(@Path("type") String type, @Path("page") int page);
 
 }
