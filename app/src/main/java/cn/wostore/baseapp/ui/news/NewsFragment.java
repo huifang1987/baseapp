@@ -12,6 +12,7 @@ import cn.wostore.baseapp.adapter.ItemListAdapter.OnItemClickListener;
 import cn.wostore.baseapp.adapter.ItemListAdapter.OnRetryClickListener;
 import cn.wostore.baseapp.app.App;
 import cn.wostore.baseapp.base.BaseFragment;
+import cn.wostore.baseapp.ui.main.WebviewActivity;
 import cn.wostore.baseapp.utils.NetworkUtil;
 import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;

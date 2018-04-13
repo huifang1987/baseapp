@@ -18,6 +18,9 @@ public class Constants {
 
 	public static final String TYPE_ANDROID = "Android";
 	public static final String TYPE_IOS = "ios";
-	public static final String TYPE_OTHER = "瞎推荐";
+	public static final String TYPE_OTHER = "前端";
+
+	public static final String PARAM_URL = "url";
+	public static final String PARAM_TITLE = "title";
 
 }

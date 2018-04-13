@@ -14,7 +14,7 @@
   <string name="load_end"> -- 人家是有底线的 -- </string>
   <string name="swipe_refresh">下拉刷新</string>
   <string name="load_fail">加载失败，请稍后再试！</string>
-
+  <string name="details">详情</string>
   <string name="large_text">
     "Material is the metaphor.\n\n"
 

@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import cn.wostore.baseapp.Constants;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.api.response.GetGankResponse.Result;
+import cn.wostore.baseapp.ui.main.WebviewActivity;
 import cn.wostore.baseapp.widget.holder.LastHolder;
 import cn.wostore.baseapp.widget.holder.MoreHolder;
 import com.bumptech.glide.Glide;
@@ -74,7 +75,7 @@ public class ItemListAdapter extends RecyclerView.Adapter {
 		switch (getItemViewType(position)){
 			case ITEM_TYPE_NORMOL:
 				DataViewHolder viewHolder = (DataViewHolder) _holder;
-				Result bean = data.get(position);
+				final Result bean = data.get(position);
 				if (TYPE_ANDROID.equals(bean.getType())){
 					Glide.with(mContext)
 						.load(R.mipmap.ic_android)
@@ -94,6 +95,8 @@ public class ItemListAdapter extends RecyclerView.Adapter {
 					@Override
 					public void onClick(View v) {
 						onItemClickListener.onClick();
+						WebviewActivity
+							.gotoActivity(mContext, bean.getUrl(), mContext.getString(R.string.details));
 					}
 				});
 				break;
