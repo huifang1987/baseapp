@@ -17,6 +17,10 @@
     <color name="color_000000">#000000</color>
     <color name="color_6f6f6f">#6f6f6f</color>
     <color name="color_ff3030">#FF3030</color>
+    <color name="color_22c83a">#22C83A</color>
+    <color name="color_ff3333">#FF3333</color>
+    <color name="color_8e8e93">#8E8E93</color>
+    <color name="color_eeeeee">#EEEEEE</color>
 
     <!--主色-->
     <color name="color_605961">#605961</color>
