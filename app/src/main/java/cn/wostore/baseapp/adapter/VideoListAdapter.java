@@ -8,14 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wostore.baseapp.R;
-import cn.wostore.baseapp.ui.video.VideoListActivity;
 import cn.wostore.baseapp.ui.video.VideoListActivity.VideoObject;
+import cn.jzvd.*;
+import cn.wostore.baseapp.widget.JzvdStdShowTitleAfterFullscreen;
 
 /**
  * Created by Fanghui at 2018-10-21
@@ -38,6 +41,9 @@ public class VideoListAdapter extends RecyclerView.Adapter {
         VideoViewHolder holder = (VideoViewHolder) _holder;
         VideoObject videoInfo = videoList.get(position);
         holder.titleTv.setText(videoInfo.getTitle());
+        holder.jzvdStd.setUp(videoInfo.getSrc(),videoInfo.getTitle(),Jzvd.SCREEN_WINDOW_LIST);
+        Glide.with(mContext).load(videoInfo.getThumbnail()).into(holder.jzvdStd.thumbImageView);
+        holder.jzvdStd.positionInList = position;
     }
 
     @Override
@@ -55,6 +61,9 @@ public class VideoListAdapter extends RecyclerView.Adapter {
 
         @BindView(R.id.tv_title)
         TextView titleTv;
+
+        @BindView(R.id.videoplayer)
+        JzvdStdShowTitleAfterFullscreen jzvdStd;
 
         public VideoViewHolder(View itemView) {
             super(itemView);

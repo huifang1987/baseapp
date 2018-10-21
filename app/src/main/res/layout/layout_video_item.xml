@@ -5,10 +5,15 @@
     android:layout_height="150dp"
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp"
-    android:layout_marginBottom="10dp"
-    android:background="@color/color_ffffff">
+    android:layout_marginBottom="10dp">
+    <cn.wostore.baseapp.widget.JzvdStdShowTitleAfterFullscreen
+        android:id="@+id/videoplayer"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"/>
     <TextView
         android:id="@+id/tv_title"
+        android:layout_below="@id/videoplayer"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"

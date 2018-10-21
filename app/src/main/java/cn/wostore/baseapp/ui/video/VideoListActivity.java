@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.adapter.VideoListAdapter;
 import cn.wostore.baseapp.base.BaseActivity;
 import cn.wostore.baseapp.widget.CustomToolBar;
+import cn.jzvd.*;
 
 /**
  * Created by Fanghui at 2018-10-21
@@ -78,6 +80,31 @@ public class VideoListActivity extends BaseActivity {
         videoList.add(video_3);
         videoList.add(video_4);
         videoList.add(video_5);
+        VideoObject video_6 = new VideoObject(
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
+                "丁一晨的猫咪绘本（上）000001");
+        VideoObject video_7 = new VideoObject(
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
+                "丁一晨的猫咪绘本（上）000001");
+        VideoObject video_8 = new VideoObject(
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
+                "丁一晨的猫咪绘本（上）000001");
+        VideoObject video_9 = new VideoObject(
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
+                "丁一晨的猫咪绘本（上）000001");
+        VideoObject video_10 = new VideoObject(
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
+                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
+                "丁一晨的猫咪绘本（上）000001");
+        videoList.add(video_6);
+        videoList.add(video_7);
+        videoList.add(video_8);
+        videoList.add(video_9);
+        videoList.add(video_10);
         //TODO 上面为测试代码，此处数据应从网络请求。
         adapter.refresh(videoList);
     }
@@ -87,6 +114,23 @@ public class VideoListActivity extends BaseActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(mContext,2);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override
+            public void onChildViewAttachedToWindow(View view) {
+
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(View view) {
+                Jzvd jzvd = (Jzvd) view.findViewById(R.id.videoplayer);
+                if (jzvd != null && jzvd.jzDataSource.containsTheUrl(JZMediaManager.getCurrentUrl())) {
+                    Jzvd currentJzvd = JzvdMgr.getCurrentJzvd();
+                    if (currentJzvd != null && currentJzvd.currentScreen != Jzvd.SCREEN_WINDOW_FULLSCREEN) {
+                        Jzvd.releaseAllVideos();
+                    }
+                }
+            }
+        });
     }
 
     private void setUpToolbar() {
@@ -103,6 +147,19 @@ public class VideoListActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Jzvd.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Jzvd.releaseAllVideos();
     }
 
     /**
