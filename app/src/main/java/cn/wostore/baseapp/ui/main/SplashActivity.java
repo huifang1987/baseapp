@@ -12,6 +12,9 @@ import butterknife.BindView;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.base.BaseActivity;
 import cn.wostore.baseapp.manager.AppManager;
+import cn.wostore.baseapp.ui.login.LoginActivity;
+import cn.wostore.baseapp.ui.map.MapActivity;
+import cn.wostore.baseapp.utils.SharePreferencesUtil;
 
 
 public class SplashActivity extends BaseActivity {
@@ -37,7 +40,7 @@ public class SplashActivity extends BaseActivity {
                 Message message = handler.obtainMessage(0);
                 handler.sendMessageDelayed(message, DELAY_TIME);
             } else {
-                gotoMainActivity();
+                navigate();
             }
         }
     };
@@ -61,7 +64,7 @@ public class SplashActivity extends BaseActivity {
                 if (handler != null) {
                     handler.removeMessages(0);
                 }
-                gotoMainActivity();
+                navigate();
             }
         });
         Message message = handler.obtainMessage(0);
@@ -69,15 +72,14 @@ public class SplashActivity extends BaseActivity {
     }
 
 
-    /**
-     * 跳转主界面
-     */
-    private void gotoMainActivity() {
-        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        startActivity(intent);
+    private void navigate() {
+        if (SharePreferencesUtil.isLogged()){
+            MapActivity.launch(this);
+        } else {
+            LoginActivity.launch(this);
+        }
         finish();
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
