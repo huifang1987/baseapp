@@ -19,6 +19,12 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -34,7 +40,7 @@ import cn.wostore.baseapp.widget.CustomToolBar;
 /**
  * Created by Fanghui at 2018-10-21
  */
-public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListener {
+public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListener, GeocodeSearch.OnGeocodeSearchListener {
 
     @BindView(R.id.drawer_layout)
     DrawerLayout layout;
@@ -51,16 +57,21 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     @BindView(R.id.tv_dev_name)
     TextView devnameTv;
 
+    @BindView(R.id.tv_dev_loc)
+    TextView devlocTv;
+
     private  MapView mapView;
     private AMap aMap;
     private UiSettings mUiSettings;
     private MarkerOptions markerOption;
+    private GeocodeSearch geocoderSearch;
     private LatLng nanjingLatLng = new LatLng(32.0480873484,118.7911042523);
 
     private DevicesInfo dev1 = new DevicesInfo("中网一号", "1000001", "南京中网卫星通信股份有限公司", "YH0001","4G", "江苏南京", "32.1008463723" ,"118.7486761971", false);
     private DevicesInfo dev2 = new DevicesInfo("中网二号", "1000001", "南京中网卫星通信股份有限公司", "YH0001","4G", "江苏南京", "31.9573910205","118.8500118946", true);
     private DevicesInfo[] devs = {dev1, dev2};
 
+    private DevicesInfo currentDevice;
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, MapActivity.class);
@@ -94,6 +105,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
             aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nanjingLatLng, 12));
             setUpMap();
         }
+        geocoderSearch = new GeocodeSearch(this);
+        geocoderSearch.setOnGeocodeSearchListener(this);
+
     }
 
     private void setUpMap() {
@@ -205,6 +219,8 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     }
 
     private void showDeviceInfo(DevicesInfo dev){
+        currentDevice = dev;
+        getAddress(Double.parseDouble(dev.lat), Double.parseDouble(dev.lng));
         if (devInfoRl.getVisibility() == View.VISIBLE){
             devInfoRl.setVisibility(View.GONE);
         }
@@ -217,6 +233,46 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         }
         devnameTv.setTextColor(App.getContext().getResources().getColor(colorRes));
         devInfoRl.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 逆地理编码回调 （从经纬度查地址）
+     */
+    public void getAddress(double lat, double lng) {
+        LatLonPoint latLonPoint = new LatLonPoint(lat, lng);
+        RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 200,
+                GeocodeSearch.AMAP);// 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
+        geocoderSearch.getFromLocationAsyn(query);// 设置异步逆地理编码请求
+    }
+
+    /**
+     * 逆地理编码回调 （从经纬度查地址）
+     */
+    @Override
+    public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
+        if (Double.parseDouble(currentDevice.lat) != result.getRegeocodeQuery().getPoint().getLatitude()
+                || Double.parseDouble(currentDevice.lng) != result.getRegeocodeQuery().getPoint().getLongitude()){
+            return;
+        }
+        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+            if (result != null && result.getRegeocodeAddress() != null
+                    && result.getRegeocodeAddress().getFormatAddress() != null) {
+                String addressName = result.getRegeocodeAddress().getFormatAddress();
+                devlocTv.setText(addressName);
+            } else {
+                devlocTv.setText(mContext.getResources().getString(R.string.unknown_location));
+            }
+        } else {
+            devlocTv.setText(mContext.getResources().getString(R.string.unknown_location));
+        }
+    }
+
+    /**
+     * 地理编码查询回调 (从地址查经纬度)
+     */
+    @Override
+    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+
     }
 
     /**

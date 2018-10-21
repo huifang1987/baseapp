@@ -102,6 +102,29 @@
                     android:layout_height="0.5dp"
                     android:background="@color/color_eeeeee"
                     />
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/devider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_333333"
+                        android:text="@string/device_location"/>
+                    <TextView
+                        android:id="@+id/tv_dev_loc"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
