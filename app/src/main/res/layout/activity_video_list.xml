@@ -10,7 +10,14 @@
         android:layout_below="@id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_ffffff"
         >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_videolist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"/>
     </RelativeLayout>
 </RelativeLayout>
