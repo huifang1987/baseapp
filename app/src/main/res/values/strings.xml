@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">BaseApp</string>
+  <string name="app_name">云卫通</string>
   <string name="home">首页</string>
   <string name="news">资讯</string>
   <string name="video">视频</string>
