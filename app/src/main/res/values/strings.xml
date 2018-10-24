@@ -28,6 +28,10 @@
     <string name="clear_cache_ok">清除缓存完成！</string>
     <string name="logout">退出登录</string>
   <string name="device_status">终端状态：</string>
+  <string name="device_number">终端编号：</string>
+  <string name="company_name">所属企业：</string>
+  <string name="device_model">终端型号：</string>
+  <string name="channel">通信信道：</string>
   <string name="device_location">终端位置：</string>
   <string name="device_online">在线</string>
   <string name="device_offline">离线</string>

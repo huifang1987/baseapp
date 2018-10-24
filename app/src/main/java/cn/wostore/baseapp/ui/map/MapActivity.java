@@ -2,12 +2,14 @@ package cn.wostore.baseapp.ui.map;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,16 +27,34 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wostore.baseapp.R;
-import cn.wostore.baseapp.app.App;
+import cn.wostore.baseapp.api.ApiEngine;
+import cn.wostore.baseapp.api.request.GetTerminalListRequest;
+import cn.wostore.baseapp.api.response.GetTerminalListResponse;
+import cn.wostore.baseapp.api.response.GetTerminalListResponse.DataBean.TerminalBean;
 import cn.wostore.baseapp.base.BaseActivity;
+import cn.wostore.baseapp.rx.RxSchedulers;
 import cn.wostore.baseapp.ui.setting.SettingActivity;
 import cn.wostore.baseapp.ui.video.VideoListActivity;
+import cn.wostore.baseapp.utils.CommonUtil;
+import cn.wostore.baseapp.utils.L;
 import cn.wostore.baseapp.utils.SharePreferencesUtil;
+import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
+import static cn.wostore.baseapp.Constants.CHANNEL_MAP;
+import static cn.wostore.baseapp.Constants.STATUS_MAP;
+import static cn.wostore.baseapp.Constants.SUCCESS_RESP;
+import static cn.wostore.baseapp.Constants.TERMINAL_STATUS_ONLINE;
 
 /**
  * Created by Fanghui at 2018-10-21
@@ -54,10 +74,28 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     RelativeLayout devInfoRl;
 
     @BindView(R.id.tv_dev_name)
-    TextView devnameTv;
+    TextView devNameTv;
+
+    @BindView(R.id.tv_dev_num)
+    TextView devNumTv;
+
+    @BindView(R.id.tv_company_name)
+    TextView companyNameTv;
+
+    @BindView(R.id.tv_device_model)
+    TextView devModelTv;
+
+    @BindView(R.id.tv_channel)
+    TextView channelTv;
+
+    @BindView(R.id.tv_dev_status)
+    TextView devStatusTv;
 
     @BindView(R.id.tv_dev_loc)
     TextView devlocTv;
+
+    @BindView(R.id.iv_device_img)
+    ImageView devImgIv;
 
     private  MapView mapView;
     private AMap aMap;
@@ -66,15 +104,54 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     private GeocodeSearch geocoderSearch;
     private LatLng nanjingLatLng = new LatLng(32.0480873484,118.7911042523);
 
-    private DevicesInfo dev1 = new DevicesInfo("中网一号", "1000001", "南京中网卫星通信股份有限公司", "YH0001","4G", "江苏南京", "32.1008463723" ,"118.7486761971", false);
-    private DevicesInfo dev2 = new DevicesInfo("中网二号", "1000001", "南京中网卫星通信股份有限公司", "YH0001","4G", "江苏南京", "31.9573910205","118.8500118946", true);
-    private DevicesInfo[] devs = {dev1, dev2};
+    private List<TerminalBean> terminalList = new ArrayList<>();
 
-    private DevicesInfo currentDevice;
+    private TerminalBean currentTerminal;
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, MapActivity.class);
         context.startActivity(intent);
+    }
+
+    private void getTermialList(){
+        GetTerminalListRequest request = new GetTerminalListRequest();
+        request.setUserId(SharePreferencesUtil.getUserID());
+        ApiEngine.getInstance().getService()
+                .getTerminalList(request.getRequestBodyMap())
+                .compose(RxSchedulers.<GetTerminalListResponse>io_main())
+                .subscribe(new Observer<GetTerminalListResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(GetTerminalListResponse response) {
+                        try {
+                            if (SUCCESS_RESP.equals(response.getSuccess())){
+                                terminalList.clear();
+                                terminalList.addAll(response.getData().getList());
+                                setUpMap();
+                            } else {
+                                ToastUtil.showShort(mContext, response.getMessage());
+                            }
+                        } catch (Exception e) {
+                            L.e(e.getLocalizedMessage());
+                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.login_fail));
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 
@@ -101,18 +178,17 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
             aMap = mapView.getMap();
             mUiSettings = aMap.getUiSettings();
             mUiSettings.setZoomControlsEnabled(false);  //不显示默认的缩放按钮
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nanjingLatLng, 12));
-            setUpMap();
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nanjingLatLng, 11));
         }
         geocoderSearch = new GeocodeSearch(this);
         geocoderSearch.setOnGeocodeSearchListener(this);
-
+        getTermialList();
     }
 
     private void setUpMap() {
         aMap.setOnMarkerClickListener(this);
-        for (int i=0 ; i<devs.length ; i++){
-            DevicesInfo dev = devs[i];
+        for (int i = 0; i< terminalList.size() ; i++){
+            TerminalBean dev = terminalList.get(i);
             addMarkersToMap(dev, i);// 往地图上添加marker
         }
     }
@@ -120,14 +196,14 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     /**
      * 在地图上添加marker
      */
-    private void addMarkersToMap(DevicesInfo dev, int index) {
+    private void addMarkersToMap(TerminalBean dev, int index) {
         View  iconView;
-        if (dev.online){
+        if (TERMINAL_STATUS_ONLINE.equals(dev.getStatus())){
             iconView = LayoutInflater.from(this).inflate(R.layout.ic_device_online, mapView,false);
         } else {
             iconView = LayoutInflater.from(this).inflate(R.layout.ic_device_offline,mapView,false);
         }
-        LatLng positon = new LatLng(Double.parseDouble(dev.lat), Double.parseDouble(dev.lng));
+        LatLng positon = new LatLng(Double.parseDouble(dev.getLat()), Double.parseDouble(dev.getLon()));
         String title = Integer.toString(index);
         markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.fromView(iconView))
                 .position(positon)
@@ -213,25 +289,33 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     @Override
     public boolean onMarkerClick(Marker marker) {
         int index = Integer.parseInt(marker.getTitle());
-        showDeviceInfo(devs[index]);
+        showDeviceInfo(terminalList.get(index));
         return true;
     }
 
-    private void showDeviceInfo(DevicesInfo dev){
-        currentDevice = dev;
-        getAddress(Double.parseDouble(dev.lat), Double.parseDouble(dev.lng));
+    private void showDeviceInfo(TerminalBean dev){
+        currentTerminal = dev;
+        getAddress(Double.parseDouble(dev.getLat()), Double.parseDouble(dev.getLon()));
         if (devInfoRl.getVisibility() == View.VISIBLE){
             devInfoRl.setVisibility(View.GONE);
         }
-        devnameTv.setText(dev.name);
         int colorRes;
-        if (dev.online){
+        if (TERMINAL_STATUS_ONLINE.equals(dev.getStatus())){
             colorRes = R.color.color_22c83a;
         } else {
             colorRes = R.color.color_ff3333;
         }
-        devnameTv.setTextColor(App.getContext().getResources().getColor(colorRes));
+        devNameTv.setTextColor(mContext.getResources().getColor(colorRes));
+        devNameTv.setText(dev.getTerminalName());
+        devNumTv.setText(dev.getTerminalNum());
+        companyNameTv.setText(dev.getCompanyName());
+        devModelTv.setText(dev.getTerminalModel());
+        channelTv.setText(CHANNEL_MAP.get(dev.getChannel()));
+//        devlocTv.setText(dev.getAddress());
+        devStatusTv.setTextColor(mContext.getResources().getColor(colorRes));
+        devStatusTv.setText(STATUS_MAP.get(dev.getStatus()));
         devInfoRl.setVisibility(View.VISIBLE);
+        Glide.with(mContext).load(CommonUtil.getImageUrl(dev.getImage())).into(devImgIv);
     }
 
     /**
@@ -249,14 +333,16 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
      */
     @Override
     public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
-        if (Double.parseDouble(currentDevice.lat) != result.getRegeocodeQuery().getPoint().getLatitude()
-                || Double.parseDouble(currentDevice.lng) != result.getRegeocodeQuery().getPoint().getLongitude()){
+        if (Double.parseDouble(currentTerminal.getLat()) != result.getRegeocodeQuery().getPoint().getLatitude()
+                || Double.parseDouble(currentTerminal.getLon()) != result.getRegeocodeQuery().getPoint().getLongitude()){
             return;
         }
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {
             if (result != null && result.getRegeocodeAddress() != null
                     && result.getRegeocodeAddress().getFormatAddress() != null) {
-                String addressName = result.getRegeocodeAddress().getFormatAddress();
+                String addressName = result.getRegeocodeAddress().getProvince()
+                        +result.getRegeocodeAddress().getCity()
+                        +result.getRegeocodeAddress().getDistrict();
                 devlocTv.setText(addressName);
             } else {
                 devlocTv.setText(mContext.getResources().getString(R.string.unknown_location));
@@ -274,66 +360,4 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
 
     }
 
-    /**
-     * 测试类
-     */
-    private static class DevicesInfo {
-        private String name;
-        private String number;
-        private String owner;
-        private String model;
-        private String route;
-        private String location;
-        private boolean online;
-        private String lat;
-        private String lng;
-
-        public DevicesInfo(String name, String number, String owner, String model, String route, String location, String lat, String lng, boolean online) {
-            this.name = name;
-            this.number = number;
-            this.owner = owner;
-            this.model = model;
-            this.route = route;
-            this.location = location;
-            this.online = online;
-            this.lat = lat;
-            this.lng = lng;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getNumber() {
-            return number;
-        }
-
-        public String getOwner() {
-            return owner;
-        }
-
-        public String getModel() {
-            return model;
-        }
-
-        public String getRoute() {
-            return route;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public boolean isOnline() {
-            return online;
-        }
-
-        public String getLat() {
-            return lat;
-        }
-
-        public String getLng() {
-            return lng;
-        }
-    }
 }
