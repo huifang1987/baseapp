@@ -25,6 +25,9 @@ public class SplashActivity extends BaseActivity {
     @BindView(R.id.skip)
     LinearLayout jump;
 
+    @BindView(R.id.btn_enter)
+    TextView enterBtn;
+
     @BindView(R.id.count)
     TextView count;
 
@@ -59,6 +62,15 @@ public class SplashActivity extends BaseActivity {
     public void initView(Bundle savedInstanceState) {
         count.setText(times + "s");
         jump.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (handler != null) {
+                    handler.removeMessages(0);
+                }
+                navigate();
+            }
+        });
+        enterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (handler != null) {

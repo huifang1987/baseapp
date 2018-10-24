@@ -6,11 +6,27 @@
 
     <ImageView
       android:id="@+id/ad_iv"
-      android:src="@mipmap/welcome"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:src="@mipmap/bg_splash"
+      android:layout_width="328dp"
+      android:layout_height="328dp"
       android:scaleType="fitXY"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="101dp"
       />
+    
+    <TextView
+        android:id="@+id/btn_enter"
+        android:layout_below="@id/ad_iv"
+        android:layout_marginTop="91dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="300dp"
+        android:layout_height="44dp"
+        android:background="@drawable/shape_btn_border"
+        android:text="@string/enter_now"
+        android:textColor="@color/color_3b89ff"
+        android:textSize="20sp"
+        android:gravity="center"
+        />
 
     <LinearLayout
       android:id="@+id/skip"
@@ -37,7 +53,7 @@
           android:layout_height="wrap_content"
           android:layout_marginLeft="3dp"
           android:gravity="center"
-          android:textColor="@color/color_fff000"
+          android:textColor="@color/color_ffffff"
           android:textSize="12sp"
           />
     </LinearLayout>
