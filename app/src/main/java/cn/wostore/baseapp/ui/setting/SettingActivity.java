@@ -80,8 +80,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void logout(){
-        SharePreferencesUtil.setLogin(false);
-        SharePreferencesUtil.clearNickname();
+        SharePreferencesUtil.clearUserInfo();
         LoginActivity.launch(this);
         finish();
     }

@@ -23,4 +23,14 @@ public class Constants {
 	public static final String PARAM_URL = "url";
 	public static final String PARAM_TITLE = "title";
 
+	/**
+	 * 请求失败
+	 */
+	public static final String FAIL_RESP = "false";
+
+	/**
+	 * 请求成功
+	 */
+	public static final String SUCCESS_RESP = "true";
+
 }

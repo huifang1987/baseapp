@@ -34,7 +34,6 @@ import cn.wostore.baseapp.base.BaseActivity;
 import cn.wostore.baseapp.ui.setting.SettingActivity;
 import cn.wostore.baseapp.ui.video.VideoListActivity;
 import cn.wostore.baseapp.utils.SharePreferencesUtil;
-import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 
 /**
@@ -92,7 +91,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     @Override
     public void initView(Bundle savedInstanceState) {
         setUpToolbar();
-        String username = SharePreferencesUtil.getNickname();
+        String username = SharePreferencesUtil.getUsername();
         if (!TextUtils.isEmpty(username)){
             userNameTv.setText(username);
         }

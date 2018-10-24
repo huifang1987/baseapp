@@ -13,7 +13,8 @@ import cn.wostore.baseapp.app.App;
 public final class SharePreferencesUtil {
     private static final String FILE_NAME_CONFIG = "config";
     public static final String KEY_ISLOGGED = "is_logged";
-    public static final String KEY_NICKNAME = "nickname";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_USERID = "userid";
 
     private SharePreferencesUtil() {
     }
@@ -132,23 +133,40 @@ public final class SharePreferencesUtil {
         saveShareBooleanData(FILE_NAME_CONFIG, KEY_ISLOGGED, logged);
     }
     /**
-     * 获取用户昵称
+     * 获取用户名
      */
-    public static String getNickname() {
-        return getShareStringData(FILE_NAME_CONFIG, KEY_NICKNAME);
+    public static String getUsername() {
+        return getShareStringData(FILE_NAME_CONFIG, KEY_USERNAME);
     }
 
     /**
-     * 保存用户昵称
+     * 保存用户名
      */
-    public static void saveNickname(String nickname) {
-        saveShareStringData(FILE_NAME_CONFIG, KEY_NICKNAME, nickname);
+    public static void saveUsername(String username) {
+        saveShareStringData(FILE_NAME_CONFIG, KEY_USERNAME, username);
+    }
+
+    /**
+     * 获取用户ID
+     */
+    public static String getUserID() {
+        return getShareStringData(FILE_NAME_CONFIG, KEY_USERID);
+    }
+
+    /**
+     * 保存用户ID
+     */
+    public static void saveUserID(String id) {
+        saveShareStringData(FILE_NAME_CONFIG, KEY_USERID, id);
     }
     /**
      * 清除用户昵称
      */
-    public static void clearNickname() {
-        saveShareStringData(FILE_NAME_CONFIG, KEY_NICKNAME, "");
+    public static void clearUserInfo() {
+        setLogin(false);
+        saveShareStringData(FILE_NAME_CONFIG, KEY_USERNAME, "");
+        saveShareStringData(FILE_NAME_CONFIG, KEY_USERID, "");
+
     }
 
 }

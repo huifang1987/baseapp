@@ -37,7 +37,7 @@ public class L {
     /**
      * 打印log的
      */
-    private static String TAG = "baseapp";
+    private static String TAG = "yunweitong";
 
     /**
      * 设置是否打印log
