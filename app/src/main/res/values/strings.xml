@@ -25,7 +25,7 @@
     <string name="video">视频</string>
     <string name="settings">设置</string>
     <string name="clear_cache">清除缓存</string>
-    <string name="clear_cache_ok">清除缓存完成！</string>
+    <string name="clear_cache_ok">已为您清除缓存!</string>
     <string name="logout">退出登录</string>
   <string name="device_status">终端状态：</string>
   <string name="device_number">终端编号：</string>

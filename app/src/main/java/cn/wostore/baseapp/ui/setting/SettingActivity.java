@@ -3,7 +3,9 @@ package cn.wostore.baseapp.ui.setting;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,6 +26,10 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.tool_bar)
     CustomToolBar toolbar;
 
+    @BindView(R.id.tv_cache_size)
+    TextView cacheSizeTv;
+
+    private String cacheSize = "0 KB";
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, SettingActivity.class);
@@ -43,6 +49,12 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         setUpToolbar();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCacheSize();
     }
 
     private void setUpToolbar() {
@@ -74,14 +86,25 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void clearCache(){
-        DataCleanManager.cleanInternalCache(App.getContext());
-        DataCleanManager.cleanExternalCache(App.getContext());
-        ToastUtil.showShort(this, App.getContext().getString(R.string.clear_cache_ok));
+        DataCleanManager.clearAllCache(mContext);
+        cacheSizeTv.setText("0 KB");
+        ToastUtil.showShort(this, App.getContext().getString(R.string.clear_cache_ok) );
     }
 
     private void logout(){
         SharePreferencesUtil.clearUserInfo();
         LoginActivity.launch(this);
         finish();
+    }
+
+    public void getCacheSize() {
+        try {
+            cacheSize = DataCleanManager.getTotalCacheSize(mContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!TextUtils.isEmpty(cacheSize)){
+            cacheSizeTv.setText(cacheSize);
+        }
     }
 }
