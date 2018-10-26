@@ -3,6 +3,7 @@ package cn.wostore.baseapp.ui.map;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -69,6 +70,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
 
     @BindView(R.id.username)
     TextView userNameTv;
+
+    @BindView(R.id.phone_info)
+    TextView phoneInfo;
 
     @BindView(R.id.rl_dev_info)
     RelativeLayout devInfoRl;
@@ -171,6 +175,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         String username = SharePreferencesUtil.getUsername();
         if (!TextUtils.isEmpty(username)){
             userNameTv.setText(username);
+        }
+        if (!TextUtils.isEmpty(Build.MODEL)){
+            phoneInfo.setText(Build.MODEL);
         }
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
