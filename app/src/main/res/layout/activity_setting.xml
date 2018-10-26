@@ -9,7 +9,7 @@
         android:layout_below="@id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_ffffff"
+        android:background="@color/color_f6faff"
         >
         <TextView
             android:id="@+id/tv_clear_cache"
@@ -20,6 +20,7 @@
             android:text="@string/clear_cache"
             android:textColor="@color/color_333333"
             android:textSize="14sp"
+            android:background="@color/color_ffffff"
             />
         <TextView
             android:id="@+id/tv_logout"
@@ -31,6 +32,7 @@
             android:gravity="center"
             android:text="@string/logout"
             android:textColor="@color/color_ff3030"
+            android:background="@color/color_ffffff"
             android:textSize="14sp"
             />
     </RelativeLayout>
