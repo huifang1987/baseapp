@@ -14,6 +14,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
@@ -56,6 +60,7 @@ import static cn.wostore.baseapp.Constants.CHANNEL_MAP;
 import static cn.wostore.baseapp.Constants.STATUS_MAP;
 import static cn.wostore.baseapp.Constants.SUCCESS_RESP;
 import static cn.wostore.baseapp.Constants.TERMINAL_STATUS_ONLINE;
+import static com.amap.api.location.AMapLocationClientOption.*;
 
 /**
  * Created by Fanghui at 2018-10-21
@@ -101,14 +106,19 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     @BindView(R.id.iv_device_img)
     ImageView devImgIv;
 
-    private  MapView mapView;
+    /***************高德地图相关*****************/
+    private MapView mapView;
     private AMap aMap;
     private UiSettings mUiSettings;
     private MarkerOptions markerOption;
     private GeocodeSearch geocoderSearch;
-    private LatLng nanjingLatLng = new LatLng(32.0480873484,118.7911042523);
-
+    public AMapLocationClient mLocationClient = null; //声明AMapLocationClient类对象
+    public AMapLocationListener mLocationListener = null; //设置定位回调监听
+    public AMapLocationClientOption mLocationOption = null;     //声明AMapLocationClientOption对象
     private List<TerminalBean> terminalList = new ArrayList<>();
+    /************************************/
+
+    private static final String TITLE_MY_LOCAION = "my_location";
 
     private TerminalBean currentTerminal;
 
@@ -179,20 +189,94 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         if (!TextUtils.isEmpty(Build.MODEL)){
             phoneInfo.setText(Build.MODEL);
         }
+        initMap(savedInstanceState);
+        initLocate();
+        startLocate();
+        geocoderSearch = new GeocodeSearch(this);
+        geocoderSearch.setOnGeocodeSearchListener(this);
+        getTermialList();
+    }
+
+
+    /**
+     * 初始化地图
+     */
+    private void initMap(Bundle savedInstanceState){
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);// 此方法必须重写
         if (aMap == null) {
             aMap = mapView.getMap();
             mUiSettings = aMap.getUiSettings();
             mUiSettings.setZoomControlsEnabled(false);  //不显示默认的缩放按钮
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(nanjingLatLng, 11));
         }
-        geocoderSearch = new GeocodeSearch(this);
-        geocoderSearch.setOnGeocodeSearchListener(this);
-        getTermialList();
+    }
+
+    /**
+     * 初始化定位
+     */
+    private void initLocate(){
+        mLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                ToastUtil.showShort(mContext, aMapLocation.getAddress());
+                LatLng positon = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                clearMyLocation();
+                markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        .position(positon)
+                        .title(TITLE_MY_LOCAION)
+                        .draggable(true);
+                aMap.addMarker(markerOption);
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positon, 11));
+            }
+        };
+
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        mLocationClient.setLocationListener(mLocationListener);
+        //初始化AMapLocationClientOption对象
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
+        mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setOnceLocation(true);
+        //给定位客户端对象设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+    }
+
+    //清除我的定位点
+    private void clearMyLocation() {
+        //获取地图上所有Marker
+        List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
+        for (int i = 0; i < mapScreenMarkers.size(); i++) {
+            Marker marker = mapScreenMarkers.get(i);
+            if (TITLE_MY_LOCAION.equals(marker.getTitle())) {
+                marker.remove();//移除当前Marker
+            }
+        }
+        aMap.invalidate();//刷新地图
+    }
+
+    //清除设备定位点
+    private void clearTerminalLocations() {
+        //获取地图上所有Marker
+        List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
+        for (int i = 0; i < mapScreenMarkers.size(); i++) {
+            Marker marker = mapScreenMarkers.get(i);
+            if (! TITLE_MY_LOCAION.equals(marker.getTitle())) {
+                marker.remove();//移除当前Marker
+            }
+        }
+        aMap.invalidate();//刷新地图
+    }
+
+
+    /**
+     * 开始定位
+     */
+    private void startLocate() {
+        mLocationClient.startLocation();
     }
 
     private void setUpMap() {
+        clearTerminalLocations();
         aMap.setOnMarkerClickListener(this);
         for (int i = 0; i< terminalList.size() ; i++){
             TerminalBean dev = terminalList.get(i);
@@ -272,7 +356,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         });
     }
 
-    @OnClick({R.id.ll_video, R.id.ll_setting, R.id.btn_close})
+    @OnClick({R.id.ll_video, R.id.ll_setting, R.id.btn_close, R.id.btn_locate})
     public void clickMenu(View view){
         switch (view.getId()){
             case R.id.ll_video:
@@ -286,6 +370,8 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                     devInfoRl.setVisibility(View.GONE);
                 }
                 break;
+            case R.id.btn_locate:
+                startLocate();
         }
     }
 
