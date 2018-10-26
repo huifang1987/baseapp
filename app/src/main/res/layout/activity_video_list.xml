@@ -20,5 +20,9 @@
             android:paddingBottom="10dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"/>
+        <cn.wostore.baseapp.widget.LoadLayout
+            android:id="@+id/load_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 </RelativeLayout>

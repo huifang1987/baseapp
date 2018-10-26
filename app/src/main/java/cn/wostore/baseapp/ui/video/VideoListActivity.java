@@ -20,11 +20,13 @@ import cn.wostore.baseapp.api.response.GetVideoListResponse.DataBean.VideoBean;
 import cn.wostore.baseapp.base.BaseActivity;
 import cn.wostore.baseapp.rx.RxSchedulers;
 import cn.wostore.baseapp.utils.L;
+import cn.wostore.baseapp.utils.NetUtil;
 import cn.wostore.baseapp.utils.SharePreferencesUtil;
 import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import cn.jzvd.*;
 import cn.wostore.baseapp.widget.JZExoPlayer;
+import cn.wostore.baseapp.widget.LoadLayout;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -40,6 +42,9 @@ public class VideoListActivity extends BaseActivity {
 
     @BindView(R.id.rv_videolist)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.load_layout)
+    LoadLayout loadLayout;
 
     VideoListAdapter adapter;
 
@@ -63,12 +68,27 @@ public class VideoListActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         setUpToolbar();
+        setUpLoadlayout();
         setUpRecyclerView();
         Jzvd.setMediaInterface(new JZExoPlayer());
         fetchVideoList();
     }
 
+    private void setUpLoadlayout() {
+        loadLayout.setStatus(LoadLayout.LOADING);
+        loadLayout.setOnRetryClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchVideoList();
+            }
+        });
+    }
+
     private void fetchVideoList(){
+        if (!NetUtil.isConnected(mContext)){
+            loadLayout.setStatus(LoadLayout.NO_NETWORK);
+            return;
+        }
         GetVideoListRequest request = new GetVideoListRequest();
         request.setUserId(SharePreferencesUtil.getUserID());
         ApiEngine.getInstance().getService()
@@ -84,23 +104,26 @@ public class VideoListActivity extends BaseActivity {
                     public void onNext(GetVideoListResponse response) {
                         try {
                             if (SUCCESS_RESP.equals(response.getSuccess())){
-                                videoList.clear();
-                                videoList.addAll(response.getData().getList());
-                                adapter.refresh(videoList);
-
+                                if (response.getData().getList().size() != 0){
+                                    videoList.clear();
+                                    videoList.addAll(response.getData().getList());
+                                    adapter.refresh(videoList);
+                                    loadLayout.setVisibility(View.GONE);
+                                } else {
+                                    loadLayout.setStatus(LoadLayout.EMPTY);
+                                }
                             } else {
-                                ToastUtil.showShort(mContext, response.getMessage());
+                                loadLayout.setStatus(LoadLayout.ERROR);
                             }
                         } catch (Exception e) {
                             L.e(e.getLocalizedMessage());
-                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.login_fail));
-
+                            loadLayout.setStatus(LoadLayout.ERROR);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        loadLayout.setStatus(LoadLayout.ERROR);
                     }
 
                     @Override
