@@ -73,10 +73,10 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.tv_clear_cache, R.id.tv_logout})
+    @OnClick({R.id.ll_clear_cache, R.id.tv_logout})
     public void clickMenu(View view){
         switch (view.getId()){
-            case R.id.tv_clear_cache:
+            case R.id.ll_clear_cache:
                 clearCache();
                 break;
             case R.id.tv_logout:
