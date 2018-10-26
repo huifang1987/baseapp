@@ -14,8 +14,7 @@ import butterknife.BindView;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.adapter.VideoListAdapter;
 import cn.wostore.baseapp.api.ApiEngine;
-import cn.wostore.baseapp.api.request.GetTerminalListRequest;
-import cn.wostore.baseapp.api.response.GetTerminalListResponse;
+import cn.wostore.baseapp.api.request.GetVideoListRequest;
 import cn.wostore.baseapp.api.response.GetVideoListResponse;
 import cn.wostore.baseapp.api.response.GetVideoListResponse.DataBean.VideoBean;
 import cn.wostore.baseapp.base.BaseActivity;
@@ -25,6 +24,7 @@ import cn.wostore.baseapp.utils.SharePreferencesUtil;
 import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import cn.jzvd.*;
+import cn.wostore.baseapp.widget.JZExoPlayer;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -64,11 +64,12 @@ public class VideoListActivity extends BaseActivity {
     public void initView(Bundle savedInstanceState) {
         setUpToolbar();
         setUpRecyclerView();
+        Jzvd.setMediaInterface(new JZExoPlayer());
         fetchVideoList();
     }
 
     private void fetchVideoList(){
-        GetTerminalListRequest request = new GetTerminalListRequest();
+        GetVideoListRequest request = new GetVideoListRequest();
         request.setUserId(SharePreferencesUtil.getUserID());
         ApiEngine.getInstance().getService()
                 .getVideoList(request.getRequestBodyMap())
@@ -118,7 +119,6 @@ public class VideoListActivity extends BaseActivity {
         mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
-
             }
 
             @Override

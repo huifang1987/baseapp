@@ -68,9 +68,7 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.3.1'
     compile 'cn.jzvd:jiaozivideoplayer:6.3.1'
     //compile project(':jiaozivideoplayer')
-    //ijkplayer
-//    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
-//    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
-
+    //exoplayer
+    compile 'com.google.android.exoplayer:exoplayer:2.7.1'
 
 }
