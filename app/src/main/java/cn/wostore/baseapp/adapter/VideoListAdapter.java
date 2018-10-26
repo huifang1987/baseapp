@@ -16,8 +16,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wostore.baseapp.R;
-import cn.wostore.baseapp.ui.video.VideoListActivity.VideoObject;
+import cn.wostore.baseapp.api.response.GetVideoListResponse.DataBean.VideoBean;
 import cn.jzvd.*;
+import cn.wostore.baseapp.utils.CommonUtil;
+import cn.wostore.baseapp.utils.L;
 import cn.wostore.baseapp.widget.JzvdStdShowTitleAfterFullscreen;
 
 /**
@@ -27,7 +29,7 @@ public class VideoListAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
 
-    private List<VideoObject> videoList = new ArrayList<>();
+    private List<VideoBean> videoList = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -39,10 +41,12 @@ public class VideoListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(ViewHolder _holder, int position) {
         VideoViewHolder holder = (VideoViewHolder) _holder;
-        VideoObject videoInfo = videoList.get(position);
+        VideoBean videoInfo = videoList.get(position);
         holder.titleTv.setText(videoInfo.getTitle());
-        holder.jzvdStd.setUp(videoInfo.getSrc(),videoInfo.getTitle(),Jzvd.SCREEN_WINDOW_LIST);
-        Glide.with(mContext).load(videoInfo.getThumbnail()).into(holder.jzvdStd.thumbImageView);
+        L.d(CommonUtil.getVideoUrl(videoInfo.getLink()));
+        holder.jzvdStd.setUp(CommonUtil.getVideoUrl(videoInfo.getLink()),
+                videoInfo.getTitle(),Jzvd.SCREEN_WINDOW_LIST);
+        Glide.with(mContext).load(CommonUtil.getImageUrl(videoInfo.getImage())).into(holder.jzvdStd.thumbImageView);
         holder.jzvdStd.positionInList = position;
     }
 
@@ -51,7 +55,7 @@ public class VideoListAdapter extends RecyclerView.Adapter {
         return videoList.size();
     }
 
-    public void refresh(List<VideoObject> list){
+    public void refresh(List<VideoBean> list){
         videoList.clear();
         videoList.addAll(list);
         notifyDataSetChanged();

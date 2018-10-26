@@ -3,6 +3,7 @@ package cn.wostore.baseapp.api;
 import java.util.Map;
 
 import cn.wostore.baseapp.api.response.GetTerminalListResponse;
+import cn.wostore.baseapp.api.response.GetVideoListResponse;
 import cn.wostore.baseapp.api.response.LoginResponse;
 import io.reactivex.Observable;
 import cn.wostore.baseapp.api.response.GetGankResponse;
@@ -29,5 +30,10 @@ public interface ApiService {
     @Multipart
     @POST("terminal/getList")
     Observable<GetTerminalListResponse> getTerminalList(@PartMap Map<String, RequestBody> request);
+
+    @Multipart
+    @POST("video/getVideoList")
+    Observable<GetVideoListResponse> getVideoList(@PartMap Map<String, RequestBody> request);
+
 
 }

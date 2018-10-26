@@ -13,9 +13,22 @@ import java.util.List;
 import butterknife.BindView;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.adapter.VideoListAdapter;
+import cn.wostore.baseapp.api.ApiEngine;
+import cn.wostore.baseapp.api.request.GetTerminalListRequest;
+import cn.wostore.baseapp.api.response.GetTerminalListResponse;
+import cn.wostore.baseapp.api.response.GetVideoListResponse;
+import cn.wostore.baseapp.api.response.GetVideoListResponse.DataBean.VideoBean;
 import cn.wostore.baseapp.base.BaseActivity;
+import cn.wostore.baseapp.rx.RxSchedulers;
+import cn.wostore.baseapp.utils.L;
+import cn.wostore.baseapp.utils.SharePreferencesUtil;
+import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import cn.jzvd.*;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
+import static cn.wostore.baseapp.Constants.SUCCESS_RESP;
 
 /**
  * Created by Fanghui at 2018-10-21
@@ -30,7 +43,7 @@ public class VideoListActivity extends BaseActivity {
 
     VideoListAdapter adapter;
 
-    List<VideoObject> videoList = new ArrayList<>();
+    List<VideoBean> videoList = new ArrayList<>();
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, VideoListActivity.class);
@@ -55,58 +68,46 @@ public class VideoListActivity extends BaseActivity {
     }
 
     private void fetchVideoList(){
-        VideoObject video_1 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_2 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_3 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_4 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_5 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        videoList.add(video_1);
-        videoList.add(video_2);
-        videoList.add(video_3);
-        videoList.add(video_4);
-        videoList.add(video_5);
-        VideoObject video_6 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_7 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_8 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_9 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        VideoObject video_10 = new VideoObject(
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/video/3384beaa6def443592bf4c62614346c4.mp4?st=0f54OpPlWZtqdJpS7sPzIQ&e=1540119442",
-                "http://xwxt.hxll.wostore.cn/upload/woxueba/resource/images/feeb794b08e94a40bddc8e720dea8c49.jpg",
-                "丁一晨的猫咪绘本（上）000001");
-        videoList.add(video_6);
-        videoList.add(video_7);
-        videoList.add(video_8);
-        videoList.add(video_9);
-        videoList.add(video_10);
-        //TODO 上面为测试代码，此处数据应从网络请求。
-        adapter.refresh(videoList);
+        GetTerminalListRequest request = new GetTerminalListRequest();
+        request.setUserId(SharePreferencesUtil.getUserID());
+        ApiEngine.getInstance().getService()
+                .getVideoList(request.getRequestBodyMap())
+                .compose(RxSchedulers.<GetVideoListResponse>io_main())
+                .subscribe(new Observer<GetVideoListResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(GetVideoListResponse response) {
+                        try {
+                            if (SUCCESS_RESP.equals(response.getSuccess())){
+                                videoList.clear();
+                                videoList.addAll(response.getData().getList());
+                                adapter.refresh(videoList);
+
+                            } else {
+                                ToastUtil.showShort(mContext, response.getMessage());
+                            }
+                        } catch (Exception e) {
+                            L.e(e.getLocalizedMessage());
+                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.login_fail));
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
     }
 
     private void setUpRecyclerView() {
@@ -162,30 +163,4 @@ public class VideoListActivity extends BaseActivity {
         Jzvd.releaseAllVideos();
     }
 
-    /**
-     * 测试类
-     */
-    public static class VideoObject{
-        private String src;
-        private String thumbnail;
-        private String title;
-
-        public VideoObject(String src, String thumbnail, String title) {
-            this.src = src;
-            this.thumbnail = thumbnail;
-            this.title = title;
-        }
-
-        public String getSrc() {
-            return src;
-        }
-
-        public String getThumbnail() {
-            return thumbnail;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-    }
 }

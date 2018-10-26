@@ -33,7 +33,7 @@ public class CommonUtil {
 	}
 
 	public static String getVideoUrl(String id){
-		return String.format(BASE_URL+"common/video/view/"+id);
+		return String.format(BASE_URL+id);
 	}
 
 }
