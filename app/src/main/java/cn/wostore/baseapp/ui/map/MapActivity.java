@@ -32,6 +32,11 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.amap.api.services.weather.LocalWeatherForecastResult;
+import com.amap.api.services.weather.LocalWeatherLive;
+import com.amap.api.services.weather.LocalWeatherLiveResult;
+import com.amap.api.services.weather.WeatherSearch;
+import com.amap.api.services.weather.WeatherSearchQuery;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -106,6 +111,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     @BindView(R.id.iv_device_img)
     ImageView devImgIv;
 
+    @BindView(R.id.tv_weather)
+    TextView weatherTv;
+
     /***************高德地图相关*****************/
     private MapView mapView;
     private AMap aMap;
@@ -116,11 +124,15 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     public AMapLocationListener mLocationListener = null; //设置定位回调监听
     public AMapLocationClientOption mLocationOption = null;     //声明AMapLocationClientOption对象
     private List<TerminalBean> terminalList = new ArrayList<>();
-    /************************************/
+    /**************天气查询相关*************/
+    private WeatherSearchQuery mquery;
+    private WeatherSearch mweathersearch;
+
 
     private static final String TITLE_MY_LOCAION = "my_location";
 
-    private TerminalBean currentTerminal;
+    private String currentCity = "南京市";
+    private TerminalBean currentTerminal;   //当前展示详情的设备
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, MapActivity.class);
@@ -220,6 +232,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
             public void onLocationChanged(AMapLocation aMapLocation) {
                 ToastUtil.showShort(mContext, aMapLocation.getAddress());
                 LatLng positon = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                getAddress(aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 clearMyLocation();
                 markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                         .position(positon)
@@ -241,7 +254,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         mLocationClient.setLocationOption(mLocationOption);
     }
 
-    //清除我的定位点
+    /**
+     * 清除我的定位点
+     */
     private void clearMyLocation() {
         //获取地图上所有Marker
         List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
@@ -254,7 +269,9 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         aMap.invalidate();//刷新地图
     }
 
-    //清除设备定位点
+    /**
+     * 清除设备定位点
+     */
     private void clearTerminalLocations() {
         //获取地图上所有Marker
         List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
@@ -267,6 +284,32 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
         aMap.invalidate();//刷新地图
     }
 
+    /**
+     * 查询实时天气
+     */
+    private void searchliveweather() {
+        mquery = new WeatherSearchQuery(currentCity, WeatherSearchQuery.WEATHER_TYPE_LIVE);//检索参数为城市和天气类型，实时天气为1、天气预报为2
+        mweathersearch=new WeatherSearch(this);
+        mweathersearch.setOnWeatherSearchListener(new WeatherSearch.OnWeatherSearchListener() {
+            @Override
+            public void onWeatherLiveSearched(LocalWeatherLiveResult weatherLiveResult, int rCode) {
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (weatherLiveResult != null && weatherLiveResult.getLiveResult() != null) {
+                        LocalWeatherLive weatherlive = weatherLiveResult.getLiveResult();
+                        weatherTv.setText(weatherlive.getTemperature()+"°C "+weatherlive.getWeather());
+                        //ToastUtil.showShort(mContext, weatherlive.getTemperature()+"°C "+weatherlive.getWeather());
+                    }
+                }
+            }
+
+            @Override
+            public void onWeatherForecastSearched(LocalWeatherForecastResult localWeatherForecastResult, int i) {
+
+            }
+        });
+        mweathersearch.setQuery(mquery);
+        mweathersearch.searchWeatherAsyn(); //异步搜索
+    }
 
     /**
      * 开始定位
@@ -369,6 +412,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                 if (devInfoRl.getVisibility() == View.VISIBLE){
                     devInfoRl.setVisibility(View.GONE);
                 }
+                currentTerminal = null;
                 break;
             case R.id.btn_locate:
                 startLocate();
@@ -426,6 +470,11 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
      */
     @Override
     public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
+        if (currentTerminal == null){
+            currentCity = result.getRegeocodeAddress().getCity();
+            searchliveweather();
+            return;
+        }
         if (Double.parseDouble(currentTerminal.getLat()) != result.getRegeocodeQuery().getPoint().getLatitude()
                 || Double.parseDouble(currentTerminal.getLon()) != result.getRegeocodeQuery().getPoint().getLongitude()){
             return;
