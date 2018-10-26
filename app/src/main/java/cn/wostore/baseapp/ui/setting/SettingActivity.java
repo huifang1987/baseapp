@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.app.App;
 import cn.wostore.baseapp.base.BaseActivity;
+import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.ui.login.LoginActivity;
 import cn.wostore.baseapp.utils.DataCleanManager;
 import cn.wostore.baseapp.utils.SharePreferencesUtil;
@@ -94,7 +95,7 @@ public class SettingActivity extends BaseActivity {
     private void logout(){
         SharePreferencesUtil.clearUserInfo();
         LoginActivity.launch(this);
-        finish();
+        AppManager.getAppManager().finishAllActivity();
     }
 
     public void getCacheSize() {

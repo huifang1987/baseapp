@@ -90,6 +90,7 @@ public class LoginActivity extends BaseActivity{
                                 SharePreferencesUtil.saveUsername(loginResponse.getData().getUserName());
                                 SharePreferencesUtil.saveUserID(loginResponse.getData().getId());
                                 MapActivity.launch(mContext);
+                                finish();
                             } else {
                                 ToastUtil.showShort(mContext, loginResponse.getMessage());
                                 loginBtn.setEnabled(true);
@@ -99,7 +100,6 @@ public class LoginActivity extends BaseActivity{
                             ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.login_fail));
                             loginBtn.setEnabled(true);
                             loginBtn.setText(mContext.getResources().getString(R.string.login));
-
                         }
                     }
 
