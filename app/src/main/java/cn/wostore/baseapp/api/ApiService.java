@@ -20,9 +20,6 @@ public interface ApiService {
 
     String BASE_URL="http://47.96.124.141:8080/cloud-command/";
 
-    @GET("api/data/{type}/10/{page}")
-    Observable<GetGankResponse> getGank(@Path("type") String type, @Path("page") int page);
-
     @Multipart
     @POST("user/loginSubmit")
     Observable<LoginResponse> login(@PartMap Map<String, RequestBody> request);
