@@ -58,6 +58,7 @@ import cn.wostore.baseapp.utils.L;
 import cn.wostore.baseapp.utils.SharePreferencesUtil;
 import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
+import cn.wostore.baseapp.widget.LoadingDialog;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -71,6 +72,8 @@ import static com.amap.api.location.AMapLocationClientOption.*;
  * Created by Fanghui at 2018-10-21
  */
 public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListener, GeocodeSearch.OnGeocodeSearchListener {
+
+    private static final String TAG = MapActivity.class.getSimpleName();
 
     @BindView(R.id.drawer_layout)
     DrawerLayout layout;
@@ -140,6 +143,8 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     }
 
     private void getTermialList(){
+        final LoadingDialog dialog = LoadingDialog.newInstance();
+        dialog.show(this.getFragmentManager(), TAG);
         GetTerminalListRequest request = new GetTerminalListRequest();
         request.setUserId(SharePreferencesUtil.getUserID());
         ApiEngine.getInstance().getService()
@@ -155,27 +160,31 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                     public void onNext(GetTerminalListResponse response) {
                         try {
                             if (SUCCESS_RESP.equals(response.getSuccess())){
-                                terminalList.clear();
-                                terminalList.addAll(response.getData().getList());
-                                setUpMap();
+                                if (response.getData().getList().size() != 0){
+                                    terminalList.clear();
+                                    terminalList.addAll(response.getData().getList());
+                                    setUpMap();
+                                } else {
+                                    ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_none));
+                                }
+
                             } else {
                                 ToastUtil.showShort(mContext, response.getMessage());
                             }
                         } catch (Exception e) {
                             L.e(e.getLocalizedMessage());
-                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.login_fail));
-
+                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_fail));
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_fail));
                     }
 
                     @Override
                     public void onComplete() {
-
+                        dialog.dismiss();
                     }
                 });
     }

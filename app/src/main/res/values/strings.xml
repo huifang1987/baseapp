@@ -2,7 +2,7 @@
   <string name="app_name">云卫通</string>
   <string name="skip">跳过</string>
   <string name="enter_now">立即进入</string>
-  <string name="loading">加载中...</string>
+  <string name="loading">获取设备中...</string>
   <string name="welcome_login">欢迎登录</string>
   <string name="login_edit_username">请输入用户名</string>
   <string name="login_edit_password">请输入密码</string>
@@ -25,5 +25,7 @@
   <string name="device_offline">离线</string>
   <string name="unknown_location">江苏省南京市</string>
   <string name="login_fail">登录失败，请稍后再试！</string>
+  <string name="get_device_fail">获取设备失败，请稍后再试！</string>
+  <string name="get_device_none">当前无设备</string>
 
 </resources>
