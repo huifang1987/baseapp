@@ -6,17 +6,14 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.utils.TUtil;
-import cn.wostore.baseapp.widget.StatusBarCompat;
 
 /***************使用例子*********************
 1.mvp模式
@@ -110,28 +107,6 @@ public abstract class BaseActivity<P extends BasePresenter, M extends BaseModel>
 
     //初始化view
     public abstract void initView(Bundle savedInstanceState);
-
-    /**
-     * 着色状态栏（4.4以上系统有效）
-     */
-    protected void SetStatusBarColor() {
-        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimary));
-    }
-
-    /**
-     * 着色状态栏（4.4以上系统有效）
-     */
-    protected void SetStatusBarColor(int color) {
-        StatusBarCompat.setStatusBarColor(this, color);
-    }
-
-    /**
-     * 透明状态栏（4.4以上系统有效）
-     */
-    protected void SetTranslanteBar() {
-        StatusBarCompat.translucentStatusBar(this);
-    }
-
     /**
      * 隐藏状态栏
      */

@@ -5,33 +5,6 @@ import java.util.Map;
 
 public class Constants {
 	/**
-	 * 请求中
-	 */
-	public static final int REQUESTING = 1;
-
-	/**
-	 * 请求失败
-	 */
-	public static final int REQ_FAILED = 2;
-
-	/**
-	 * 请求成功
-	 */
-	public static final int REQ_SUCCESS = 3;
-
-	public static final String TYPE_ANDROID = "Android";
-	public static final String TYPE_IOS = "ios";
-	public static final String TYPE_OTHER = "前端";
-
-	public static final String PARAM_URL = "url";
-	public static final String PARAM_TITLE = "title";
-
-	/**
-	 * 请求失败
-	 */
-	public static final String FAIL_RESP = "false";
-
-	/**
 	 * 请求成功
 	 */
 	public static final String SUCCESS_RESP = "true";
@@ -42,7 +15,7 @@ public class Constants {
 	public static final Map<String, String> STATUS_MAP;
 	static
 	{
-		STATUS_MAP = new HashMap<String, String>();
+		STATUS_MAP = new HashMap<>();
 		STATUS_MAP.put("1", "在线");
 		STATUS_MAP.put("2", "离线");
 
@@ -52,7 +25,7 @@ public class Constants {
 	public static final Map<String, String> CHANNEL_MAP;
 	static
 	{
-		CHANNEL_MAP = new HashMap<String, String>();
+		CHANNEL_MAP = new HashMap<>();
 		CHANNEL_MAP.put("1", "2G");
 		CHANNEL_MAP.put("2", "3G");
 		CHANNEL_MAP.put("3", "4G");

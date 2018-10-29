@@ -31,17 +31,4 @@ public class NetUtil {
         return false;
     }
 
-    /**
-     * 判断是否是wifi连接
-     *
-     * @param context Context
-     * @return 是否是wifi连接
-     */
-    public static boolean isWifi(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm != null && cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
-
-    }
-
 }

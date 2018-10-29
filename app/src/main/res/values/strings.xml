@@ -9,8 +9,7 @@
   <string name="login">登录</string>
   <string name="login_ing">登录中...</string>
   <string name="user_pwd_no_empety">请输入用户名和密码</string>
-  <string name="title_map">设备地图</string>
-    <string name="video">视频</string>
+  <string name="video">视频</string>
     <string name="settings">设置</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_ok">已为您清除缓存!</string>
