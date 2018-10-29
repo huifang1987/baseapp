@@ -392,7 +392,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     }
 
     private void setUpToolbar() {
-        toolbar.setTitle(getString(R.string.title_map));
+        toolbar.setTitle(currentCity);
         toolbar.setShowBack(true);
         toolbar.setBackActionItemResId(R.mipmap.icon_mine);
         toolbar.setOnCustomToolBarListener(new CustomToolBar.OnCustomToolBarListener() {
@@ -481,6 +481,7 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
     public void onRegeocodeSearched(RegeocodeResult result, int rCode) {
         if (currentTerminal == null){
             currentCity = result.getRegeocodeAddress().getCity();
+            toolbar.setTitle(currentCity);
             searchliveweather();
             return;
         }
