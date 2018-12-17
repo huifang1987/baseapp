@@ -1,12 +1,12 @@
 package cn.wostore.baseapp.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -16,7 +16,9 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import cn.wostore.baseapp.Constants;
@@ -43,6 +45,9 @@ public class WebviewActivity extends BaseActivity {
     @BindView(R.id.load_layout)
     LoadLayout loadLayout;
 
+    @BindView(R.id.splash_view)
+    RelativeLayout splashView;
+
     private String mUrl;
 
     private String mTitle;
@@ -52,6 +57,33 @@ public class WebviewActivity extends BaseActivity {
      * 用于两次点击退出
      */
     private boolean isExit;
+
+    private static final long DELAY_TIME = 1000;
+    private int times = 3; //3秒后自动跳过
+
+    @BindView(R.id.skip)
+    LinearLayout jump;
+
+    @BindView(R.id.count)
+    TextView count;
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            times--;
+            if (count != null) {
+                count.setText(times + "s");
+            }
+            if (times > 0) {
+                Message message = handler.obtainMessage(0);
+                handler.sendMessageDelayed(message, DELAY_TIME);
+            } else {
+                hideSplashView();
+            }
+        }
+    };
+
 
     @Override
     public int getLayoutId() {
@@ -65,6 +97,7 @@ public class WebviewActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        initSplashView();
         FullScreenWorkaround.assistActivity(this);
         mCustomToolBar.setShowBack(false);
         mCustomToolBar.setShowTitle(true);
@@ -127,6 +160,29 @@ public class WebviewActivity extends BaseActivity {
         L.d(TAG, "mUrl:" + mUrl + ",mTitle:" + mTitle);
     }
 
+    private void initSplashView(){
+        count.setText(times + "s");
+        jump.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (handler != null) {
+                    handler.removeMessages(0);
+                }
+                hideSplashView();
+            }
+        });
+        Message message = handler.obtainMessage(0);
+        handler.sendMessageDelayed(message, DELAY_TIME);
+    }
+
+    /**
+     * 跳转主界面
+     */
+    private void hideSplashView() {
+        if (splashView.getVisibility() == View.VISIBLE){
+            splashView.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -250,6 +306,9 @@ public class WebviewActivity extends BaseActivity {
             mWebView.clearCache(true);
             mWebView.destroy();
             mWebView = null;
+        }
+        if (handler != null) {
+            handler.removeMessages(0);
         }
 
     }
