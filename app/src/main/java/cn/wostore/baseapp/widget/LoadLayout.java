@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import com.bumptech.glide.Glide;
 import cn.wostore.baseapp.R;
+import cn.wostore.baseapp.app.App;
 
 /**
  * 加载布局
@@ -102,7 +104,7 @@ public class LoadLayout extends RelativeLayout {
      */
     private void initSetAdjustmentHeight() {
         int height =
-            (int) getResources().getDimension(R.dimen.toolbar_height) + StatusBarCompat.getStatusBarHeight(getContext());
+                (int) getResources().getDimension(R.dimen.toolbar_height) + StatusBarCompat.getStatusBarHeight(getContext());
         setAdjustmentDistance(height);
     }
 
@@ -155,13 +157,9 @@ public class LoadLayout extends RelativeLayout {
                         loadCallbackInterface.callBack(VISIBLE);
                     }
                     contentLlyt.setClickable(false);
-                    loadIv.setBackgroundResource(R.drawable.anim_loading_replace);
-                    mAnimDrawable = (AnimationDrawable) loadIv.getBackground();
+                    Glide.with(App.getContext()).load(R.mipmap.loading1).into(loadIv);
                     loadIv.setVisibility(VISIBLE);
                     finalIv.setVisibility(GONE);
-                    if (!mAnimDrawable.isRunning()) {
-                        mAnimDrawable.start();
-                    }
                     setVisibility(VISIBLE);
                     break;
                 case NO_NETWORK:
