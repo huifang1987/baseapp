@@ -16,7 +16,8 @@
         android:name=".ui.WebviewActivity"
         android:hardwareAccelerated="true"
         android:configChanges="orientation|screenSize|keyboardHidden"
-        >
+        />
+    <activity android:name=".ui.SplashActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
