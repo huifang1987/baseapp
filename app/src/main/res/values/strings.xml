@@ -1,5 +1,4 @@
 <resources>
   <string name="app_name">小沃学堂</string>
-    <string name="loading">加载中...</string>
-  <string name="app_quit_toast">再按一次退出</string>
+  <string name="app_quit_toast">小沃学堂：再按一次退出</string>
 </resources>
