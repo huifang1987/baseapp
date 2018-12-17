@@ -16,8 +16,8 @@ import cn.wostore.baseapp.manager.AppManager;
 
 public class SplashActivity extends BaseActivity {
 
-    private static final long DELAY_TIME = 1000;
-    private int times = 3; //3秒后自动跳过
+    private static final long DELAY_TIME = 500;
+    private int times = 1; //3秒后自动跳过
 
     @BindView(R.id.skip)
     LinearLayout jump;
@@ -54,6 +54,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        jump.setVisibility(View.GONE);
         count.setText(times + "s");
         jump.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -59,7 +60,7 @@ public class WebviewActivity extends BaseActivity {
     private boolean isExit;
 
     private static final long DELAY_TIME = 1000;
-    private int times = 3; //3秒后自动跳过
+    private int times = 2; //3秒后自动跳过
 
     @BindView(R.id.skip)
     LinearLayout jump;
@@ -139,7 +140,10 @@ public class WebviewActivity extends BaseActivity {
 
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setWebChromeClient(new MyWebChromeClient());
-
+        //解决https页面加载http资源的问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        }
         loadLayout.setOnRetryClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
