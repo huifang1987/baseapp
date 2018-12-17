@@ -162,7 +162,7 @@ public class AppManager {
      * @param context      上下文
      * @param isBackground 是否开开启后台运行
      */
-    public void AppExit(Context context, Boolean isBackground) {
+    public void appExit(Context context, Boolean isBackground) {
         try {
             finishAllActivity();
             ActivityManager activityMgr = (ActivityManager) context

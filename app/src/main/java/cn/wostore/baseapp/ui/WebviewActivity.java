@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -15,13 +16,17 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+
 import butterknife.BindView;
 import cn.wostore.baseapp.Constants;
 import cn.wostore.baseapp.R;
 import cn.wostore.baseapp.base.BaseActivity;
+import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.utils.FullScreenWorkaround;
 import cn.wostore.baseapp.utils.L;
 import cn.wostore.baseapp.utils.NetworkUtil;
+import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import cn.wostore.baseapp.widget.LoadLayout;
 
@@ -43,6 +48,10 @@ public class WebviewActivity extends BaseActivity {
     private String mTitle;
 
     private WebSettings mWebSettings;
+    /**
+     * 用于两次点击退出
+     */
+    private boolean isExit;
 
     @Override
     public int getLayoutId() {
@@ -63,7 +72,11 @@ public class WebviewActivity extends BaseActivity {
         mCustomToolBar.setOnCustomToolBarListener(new CustomToolBar.OnCustomToolBarListener() {
             @Override
             public void onBackClick() {
-                finish();
+                if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
+                    if (mWebView.canGoBack()) {
+                        mWebView.goBack();
+                    }
+                }
             }
 
             @Override
@@ -134,6 +147,15 @@ public class WebviewActivity extends BaseActivity {
             super.onPageFinished(view, url);
             loadLayout.setStatus(LoadLayout.SUCCESS);
             L.d(TAG, "onPageFinished,url:" + url);
+            if (!TextUtils.isEmpty(mWebView.getUrl())
+                    && mWebView.getUrl().startsWith("http")) {
+                if (mWebView.getUrl().startsWith("https://www.xiaowoxuetang.com/index.html")
+                        || mWebView.getUrl().equals("https://www.xiaowoxuetang.com/")) {
+                    mCustomToolBar.setShowBack(false);
+                } else {
+                    mCustomToolBar.setShowBack(true);
+                }
+            }
         }
 
         @Override
@@ -182,13 +204,18 @@ public class WebviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
-            if (mWebView.canGoBack()) {
-                mWebView.goBack();
-                return;
-            }
+        if (!isExit) {
+            ToastUtil.showShort(this, getString(R.string.app_quit_toast));
+            isExit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+        } else {
+            AppManager.getAppManager().appExit(WebviewActivity.this, false);
         }
-        super.onBackPressed();
     }
 
     @Override
