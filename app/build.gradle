@@ -12,9 +12,25 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    signingConfigs {
+        debug {}
+
+        config {
+            keyAlias "chinaunicom.keystore"
+            keyPassword "010021"
+            storeFile file('../chinaunicom.keystore')
+            storePassword "010021"
+            v2SigningEnabled false
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources false
+            zipAlignEnabled true
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
