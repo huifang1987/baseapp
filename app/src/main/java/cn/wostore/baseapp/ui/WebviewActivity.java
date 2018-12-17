@@ -1,10 +1,9 @@
-package cn.wostore.baseapp.ui.main;
+package cn.wostore.baseapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -58,9 +57,9 @@ public class WebviewActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         FullScreenWorkaround.assistActivity(this);
-        mCustomToolBar.setShowBack(true);
+        mCustomToolBar.setShowBack(false);
         mCustomToolBar.setShowTitle(true);
-        mCustomToolBar.setTitle("");
+        mCustomToolBar.setTitle(Constants.BASE_TITLE);
         mCustomToolBar.setOnCustomToolBarListener(new CustomToolBar.OnCustomToolBarListener() {
             @Override
             public void onBackClick() {
@@ -105,13 +104,11 @@ public class WebviewActivity extends BaseActivity {
         //测试助手相关
         Intent intent = getIntent();
         String action = intent.getAction();
-
-        mUrl = getIntent().getStringExtra(Constants.PARAM_URL);
-        mTitle = getIntent().getStringExtra(Constants.PARAM_TITLE);
+        mUrl = Constants.BASE_URL;
         if (!TextUtils.isEmpty(mTitle)) {
             mCustomToolBar.setTitle(mTitle);
         } else {
-            mCustomToolBar.setTitle("");
+            mCustomToolBar.setTitle(Constants.BASE_TITLE);
         }
         loadUrl(mUrl);
         L.d(TAG, "mUrl:" + mUrl + ",mTitle:" + mTitle);
@@ -129,6 +126,7 @@ public class WebviewActivity extends BaseActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             L.d(TAG, "onPageStarted,url:" + url);
+            loadLayout.setStatus(LoadLayout.LOADING);
         }
 
         @Override
@@ -181,15 +179,6 @@ public class WebviewActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 进入页面
-     */
-    public static void gotoActivity(Context context, String url, String title) {
-        Intent intent = new Intent(context, WebviewActivity.class);
-        intent.putExtra(Constants.PARAM_URL, url);
-        intent.putExtra(Constants.PARAM_TITLE, title);
-        context.startActivity(intent);
-    }
 
     @Override
     public void onBackPressed() {
