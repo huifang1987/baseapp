@@ -105,7 +105,7 @@ public class WebviewActivity extends BaseActivity {
         mWebSettings.setPluginState(WebSettings.PluginState.ON);
 
         mWebView.setWebViewClient(new MyWebViewClient());
-        mWebView.setWebChromeClient(new WebChromeClient());
+        mWebView.setWebChromeClient(new MyWebChromeClient());
 
         loadLayout.setOnRetryClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +131,19 @@ public class WebviewActivity extends BaseActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    private class MyWebChromeClient extends WebChromeClient{
+
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+            super.onReceivedTitle(view, title);
+            if (!TextUtils.isEmpty(title)){
+                mCustomToolBar.setTitle(title);
+            } else {
+                mCustomToolBar.setTitle(Constants.BASE_TITLE);
+            }
+        }
     }
 
     private class MyWebViewClient extends WebViewClient {
