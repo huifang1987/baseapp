@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -106,7 +107,10 @@ public class WebviewActivity extends BaseActivity {
 
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setWebChromeClient(new MyWebChromeClient());
-
+        //解决https页面加载http资源的问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        }
         loadLayout.setOnRetryClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,6 +221,15 @@ public class WebviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
+            if (!mWebView.getUrl().startsWith("https://www.xiaowoxuetang.com/index.html")
+                    && !mWebView.getUrl().equals("https://www.xiaowoxuetang.com/")){
+                if (mWebView.canGoBack()) {
+                    mWebView.goBack();
+                    return;
+                }
+            }
+        }
         if (!isExit) {
             ToastUtil.showShort(this, getString(R.string.app_quit_toast));
             isExit = true;
