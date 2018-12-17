@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#ffffffff</color>
     <color name="colorAccent">#fa7440</color>
     <color name="color_ffffff">#ffffffff</color>
+    <color name="color_fff000">#fff000</color>
+    <color name="color_1a000000">#1a000000</color>
     <!--主色-->
 </resources>
