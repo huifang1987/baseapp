@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -156,9 +157,13 @@ public class WebviewActivity extends BaseActivity {
 //        }
     }
 
+    protected static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS =
+            new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
     private class MyWebChromeClient extends WebChromeClient{
         private View mCustomView;
         private CustomViewCallback mCustomViewCallback;
+        private FullscreenHolder mFullscreenContainer;
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
@@ -178,8 +183,12 @@ public class WebviewActivity extends BaseActivity {
                 return;
             }
             mCustomView = view;
-            mContainer.setVisibility(View.VISIBLE);
-            mContainer.addView(mCustomView);
+//            mContainer.setVisibility(View.VISIBLE);
+//            mContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
+            FrameLayout decor = (FrameLayout) getWindow().getDecorView();
+            mFullscreenContainer = new FullscreenHolder(WebviewActivity.this);
+            mFullscreenContainer.addView(view, COVER_SCREEN_PARAMS);
+            decor.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
             mCustomViewCallback = callback;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
@@ -192,11 +201,28 @@ public class WebviewActivity extends BaseActivity {
                 return;
             }
             mCustomView.setVisibility(View.GONE);
-            mContainer.removeView(mCustomView);
-            mContainer.setVisibility(View.GONE);
-            mCustomViewCallback.onCustomViewHidden();
+//            mContainer.removeView(mCustomView);
+//            mContainer.setVisibility(View.GONE);
+            FrameLayout decor = (FrameLayout) getWindow().getDecorView();
+            decor.removeView(mFullscreenContainer);
+            mFullscreenContainer = null;
             mCustomView = null;
+            mCustomViewCallback.onCustomViewHidden();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    /** 全屏容器界面 */
+    static class FullscreenHolder extends FrameLayout {
+
+        public FullscreenHolder(Context ctx) {
+            super(ctx);
+            setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent evt) {
+            return true;
         }
     }
 
