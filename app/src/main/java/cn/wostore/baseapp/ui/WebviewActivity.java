@@ -2,6 +2,7 @@ package cn.wostore.baseapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -17,6 +20,8 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -44,6 +49,9 @@ public class WebviewActivity extends BaseActivity {
     @BindView(R.id.load_layout)
     LoadLayout loadLayout;
 
+    @BindView(R.id.container)
+    FrameLayout mContainer;
+
     private String mUrl;
 
     private String mTitle;
@@ -53,6 +61,7 @@ public class WebviewActivity extends BaseActivity {
      * 用于两次点击退出
      */
     private boolean isExit;
+
 
     @Override
     public int getLayoutId() {
@@ -133,11 +142,23 @@ public class WebviewActivity extends BaseActivity {
 
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+//        switch (config.orientation) {
+//            case Configuration.ORIENTATION_LANDSCAPE:
+//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                break;
+//            case Configuration.ORIENTATION_PORTRAIT:
+//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+//                break;
+//        }
     }
 
     private class MyWebChromeClient extends WebChromeClient{
+        private View mCustomView;
+        private CustomViewCallback mCustomViewCallback;
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
@@ -147,6 +168,35 @@ public class WebviewActivity extends BaseActivity {
             } else {
                 mCustomToolBar.setTitle(Constants.BASE_TITLE);
             }
+        }
+
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            super.onShowCustomView(view, callback);
+            if (mCustomView != null) {
+                callback.onCustomViewHidden();
+                return;
+            }
+            mCustomView = view;
+            mContainer.setVisibility(View.VISIBLE);
+            mContainer.addView(mCustomView);
+            mCustomViewCallback = callback;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
+        @Override
+        public void onHideCustomView() {
+            super.onHideCustomView();
+            mWebView.setVisibility(View.VISIBLE);
+            if (mCustomView == null) {
+                return;
+            }
+            mCustomView.setVisibility(View.GONE);
+            mContainer.removeView(mCustomView);
+            mContainer.setVisibility(View.GONE);
+            mCustomViewCallback.onCustomViewHidden();
+            mCustomView = null;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
@@ -266,6 +316,5 @@ public class WebviewActivity extends BaseActivity {
         }
 
     }
-
 
 }
