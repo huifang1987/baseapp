@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +25,9 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import cn.wostore.baseapp.Constants;
@@ -252,9 +256,21 @@ public class WebviewActivity extends BaseActivity {
         }
 
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            L.d(TAG, "shouldOverrideUrlLoading");
-            return super.shouldOverrideUrlLoading(view, request);
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // 如下方案可在非微信内部WebView的H5页面中调出微信支付
+            L.d(TAG, "shouldOverrideUrlLoading, url: "+url);
+            if(url.startsWith("weixin://wap/pay?") || url.startsWith("alipays:")) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                return true;
+            } else{
+                Map<String, String> extraHeaders = new HashMap<>();
+                extraHeaders.put("Referer", "https://www.xiaowoxuetang.com");
+                view.loadUrl(url, extraHeaders);
+            }
+            return true;
         }
 
         @Override
