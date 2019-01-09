@@ -14,7 +14,7 @@ import retrofit2.http.PartMap;
 
 public interface ApiService {
 
-    String BASE_URL="http://www.cloud-satcom.com.cn/cloud-command/";
+    String BASE_URL="http://221.6.22.203:5001/cloud-command/";
 
     @Multipart
     @POST("user/loginSubmit")

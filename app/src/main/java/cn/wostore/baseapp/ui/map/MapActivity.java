@@ -173,12 +173,14 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                             }
                         } catch (Exception e) {
                             L.e(e.getLocalizedMessage());
+                            dialog.dismiss();
                             ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_fail));
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        dialog.dismiss();
                         ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_fail));
                     }
 
