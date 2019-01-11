@@ -174,7 +174,6 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                         } catch (Exception e) {
                             L.e(e.getLocalizedMessage());
                             dialog.dismiss();
-                            ToastUtil.showShort(mContext, mContext.getResources().getString(R.string.get_device_fail));
                         }
                     }
 
@@ -245,11 +244,11 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
                 LatLng positon = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 getAddress(aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 clearMyLocation();
-                markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        .position(positon)
-                        .title(TITLE_MY_LOCAION)
-                        .draggable(true);
-                aMap.addMarker(markerOption);
+//                markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+//                        .position(positon)
+//                        .title(TITLE_MY_LOCAION)
+//                        .draggable(true);
+//                aMap.addMarker(markerOption);
                 aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positon, 11));
             }
         };
@@ -342,15 +341,13 @@ public class MapActivity extends BaseActivity implements AMap.OnMarkerClickListe
      * 在地图上添加marker
      */
     private void addMarkersToMap(TerminalBean dev, int index) {
-        View  iconView;
-        if (TERMINAL_STATUS_ONLINE.equals(dev.getStatus())){
-            iconView = LayoutInflater.from(this).inflate(R.layout.ic_device_online, mapView,false);
-        } else {
-            iconView = LayoutInflater.from(this).inflate(R.layout.ic_device_offline,mapView,false);
+        float hue= BitmapDescriptorFactory.HUE_GREEN;
+        if (!TERMINAL_STATUS_ONLINE.equals(dev.getStatus())){
+            hue = BitmapDescriptorFactory.HUE_RED;
         }
         LatLng positon = new LatLng(Double.parseDouble(dev.getLat()), Double.parseDouble(dev.getLon()));
         String title = Integer.toString(index);
-        markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.fromView(iconView))
+        markerOption = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(hue))
                 .position(positon)
                 .title(title)
                 .draggable(true);
