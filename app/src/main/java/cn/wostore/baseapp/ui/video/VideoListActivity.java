@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -136,7 +137,9 @@ public class VideoListActivity extends BaseActivity {
 
     private void setUpRecyclerView() {
         adapter  = new VideoListAdapter();
-        GridLayoutManager layoutManager = new GridLayoutManager(mContext,2);
+        //GridLayoutManager layoutManager = new GridLayoutManager(mContext,2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
