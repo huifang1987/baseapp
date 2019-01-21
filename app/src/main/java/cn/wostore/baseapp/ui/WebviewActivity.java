@@ -246,8 +246,8 @@ public class WebviewActivity extends BaseActivity {
             L.d(TAG, "onPageFinished,url:" + url);
             if (!TextUtils.isEmpty(mWebView.getUrl())
                     && mWebView.getUrl().startsWith("http")) {
-                if (mWebView.getUrl().startsWith("https://www.xiaowoxuetang.com/index.html")
-                        || mWebView.getUrl().equals("https://www.xiaowoxuetang.com/")) {
+                if (mWebView.getUrl().startsWith("https://xuetang.wo.com.cn/index.html")
+                        || mWebView.getUrl().equals("https://xuetang.wo.com.cn/")) {
                     mCustomToolBar.setShowBack(false);
                 } else {
                     mCustomToolBar.setShowBack(true);
