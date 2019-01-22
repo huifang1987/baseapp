@@ -102,6 +102,7 @@ public class WebviewActivity extends BaseActivity {
         FullScreenWorkaround.assistActivity(this);
         mCustomToolBar.setShowBack(false);
         mCustomToolBar.setShowTitle(true);
+        mCustomToolBar.setShowTitle(false);
         mCustomToolBar.setTitle(Constants.BASE_TITLE);
         mCustomToolBar.setOnCustomToolBarListener(new CustomToolBar.OnCustomToolBarListener() {
             @Override

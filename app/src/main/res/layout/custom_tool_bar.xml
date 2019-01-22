@@ -62,6 +62,13 @@
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_centerVertical="true" />
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="33dp"
+            android:src="@mipmap/title"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
     </RelativeLayout>
 
 
