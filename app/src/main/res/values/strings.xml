@@ -2,4 +2,6 @@
   <string name="app_name">天上西藏</string>
   <string name="app_quit_toast">再按一次退出</string>
   <string name="skip">跳过</string>
+  <string name="enter">点击进入</string>
+
 </resources>

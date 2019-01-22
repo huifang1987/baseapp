@@ -10,11 +10,11 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -23,10 +23,18 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.loader.ImageLoader;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -37,6 +45,7 @@ import cn.wostore.baseapp.manager.AppManager;
 import cn.wostore.baseapp.utils.FullScreenWorkaround;
 import cn.wostore.baseapp.utils.L;
 import cn.wostore.baseapp.utils.NetworkUtil;
+import cn.wostore.baseapp.utils.SharePreferencesUtil;
 import cn.wostore.baseapp.utils.ToastUtil;
 import cn.wostore.baseapp.widget.CustomToolBar;
 import cn.wostore.baseapp.widget.LoadLayout;
@@ -56,6 +65,15 @@ public class WebviewActivity extends BaseActivity {
 
     @BindView(R.id.container)
     FrameLayout mContainer;
+
+    @BindView(R.id.welcome_view)
+    RelativeLayout welcomeView;
+
+    @BindView(R.id.banner)
+    Banner banner;
+
+    @BindView(R.id.btn_enter)
+    TextView enterBtn;
 
     private String mUrl;
 
@@ -80,6 +98,7 @@ public class WebviewActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        initWelcome();
         FullScreenWorkaround.assistActivity(this);
         mCustomToolBar.setShowBack(false);
         mCustomToolBar.setShowTitle(true);
@@ -145,6 +164,53 @@ public class WebviewActivity extends BaseActivity {
         L.d(TAG, "mUrl:" + mUrl + ",mTitle:" + mTitle);
     }
 
+    private void initWelcome() {
+        if (!SharePreferencesUtil.isFirstIn()){
+            return;
+        }
+        welcomeView.setVisibility(View.VISIBLE);
+        final List<Integer> images = new ArrayList<>();
+        images.add(R.mipmap.banner_1);
+        images.add(R.mipmap.banner_2);
+        images.add(R.mipmap.banner_3);
+        banner.setImageLoader(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, Object path, ImageView imageView) {
+                Glide.with(context).load(path).into(imageView);
+            }
+        });
+        banner.setImages(images);
+        banner.isAutoPlay(true);
+        banner.setDelayTime(1500);
+        banner.setIndicatorGravity(BannerConfig.CENTER);
+        banner.start();
+        banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position == 1 && positionOffset > 0.9){
+                    enterBtn.setVisibility(View.VISIBLE);
+                    banner.stopAutoPlay();
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+        enterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                welcomeView.setVisibility(View.GONE);
+                SharePreferencesUtil.clearFirstInFlag();
+            }
+        });
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration config) {
@@ -172,7 +238,7 @@ public class WebviewActivity extends BaseActivity {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
-            if (!TextUtils.isEmpty(title)){
+            if (!TextUtils.isEmpty(title) && !"小沃学堂".equals(title)){
                 mCustomToolBar.setTitle(title);
             } else {
                 mCustomToolBar.setTitle(Constants.BASE_TITLE);
@@ -267,10 +333,10 @@ public class WebviewActivity extends BaseActivity {
                 return true;
             } else{
                 Map<String, String> extraHeaders = new HashMap<>();
-                extraHeaders.put("Referer", "https://www.xiaowoxuetang.com");
+                extraHeaders.put("Referer", "https://xuetang.wo.com.cn");
                 view.loadUrl(url, extraHeaders);
+                return false;
             }
-            return true;
         }
 
         @Override
@@ -313,11 +379,16 @@ public class WebviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        L.d(mWebView.getUrl());
         if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
-            if (!mWebView.getUrl().startsWith("https://www.xiaowoxuetang.com/index.html")
-                    && !mWebView.getUrl().equals("https://www.xiaowoxuetang.com/")){
+            if (!mWebView.getUrl().startsWith("https://xuetang.wo.com.cn/index.html")
+                    && !mWebView.getUrl().equals("https://xuetang.wo.com.cn/")){
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
+                    //暂时解决“我的课程”页面总是会重定向到登录页面的问题。
+                    if (mWebView.getUrl().contains("login.html")) {
+                        mWebView.goBack();
+                    }
                     return;
                 }
             }
