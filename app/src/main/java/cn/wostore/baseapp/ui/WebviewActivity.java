@@ -107,7 +107,7 @@ public class WebviewActivity extends BaseActivity {
         mCustomToolBar.setOnCustomToolBarListener(new CustomToolBar.OnCustomToolBarListener() {
             @Override
             public void onBackClick() {
-                if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
+                if (!TextUtils.isEmpty(mWebView.getUrl())) {
                     if (mWebView.canGoBack()) {
                         mWebView.goBack();
                     }
@@ -321,24 +321,24 @@ public class WebviewActivity extends BaseActivity {
                 }
             }
         }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // 如下方案可在非微信内部WebView的H5页面中调出微信支付
-            L.d(TAG, "shouldOverrideUrlLoading, url: "+url);
-            if(url.startsWith("weixin://wap/pay?") || url.startsWith("alipays:")) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-                return true;
-            } else{
-                Map<String, String> extraHeaders = new HashMap<>();
-                extraHeaders.put("Referer", "https://xuetang.wo.com.cn");
-                view.loadUrl(url, extraHeaders);
-                return false;
-            }
-        }
+//去除支付功能
+//        @Override
+//        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//            // 如下方案可在非微信内部WebView的H5页面中调出微信支付
+//            L.d(TAG, "shouldOverrideUrlLoading, url: "+url);
+//            if(url.startsWith("weixin://wap/pay?") || url.startsWith("alipays:")) {
+//                Intent intent = new Intent();
+//                intent.setAction(Intent.ACTION_VIEW);
+//                intent.setData(Uri.parse(url));
+//                startActivity(intent);
+//                return true;
+//            } else{
+//                Map<String, String> extraHeaders = new HashMap<>();
+//                extraHeaders.put("Referer", "https://xuetang.wo.com.cn");
+//                view.loadUrl(url, extraHeaders);
+//            }
+//            return true;
+//        }
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
@@ -381,15 +381,15 @@ public class WebviewActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         L.d(mWebView.getUrl());
-        if (!TextUtils.isEmpty(mWebView.getUrl()) && mWebView.getUrl().startsWith("http")) {
+        if (!TextUtils.isEmpty(mWebView.getUrl())) {
             if (!mWebView.getUrl().startsWith("https://xuetang.wo.com.cn/index.html")
                     && !mWebView.getUrl().equals("https://xuetang.wo.com.cn/")){
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
                     //暂时解决“我的课程”页面总是会重定向到登录页面的问题。
-                    if (mWebView.getUrl().contains("login.html")) {
-                        mWebView.goBack();
-                    }
+//                    if (mWebView.getUrl().contains("login.html")) {
+//                        mWebView.goBack();
+//                    }
                     return;
                 }
             }
